@@ -1,0 +1,19 @@
+{
+  "_comment": "Editierbare Bildliste für <sv-gallery> (Content-Store-Bilder). Pro Sprache.",
+  "de": {
+    "gallery": [
+      { "image": "/img/gallery/1.jpg", "caption": "Main Stage 2026" },
+      { "image": "/img/gallery/2.jpg", "caption": "Networking Lounge" },
+      { "image": "/img/gallery/3.jpg", "caption": "Workshop-Track" },
+      { "image": "/img/gallery/4.jpg", "caption": "Abendveranstaltung" }
+    ]
+  },
+  "en": {
+    "gallery": [
+      { "image": "/img/gallery/1.jpg", "caption": "Main Stage 2026" },
+      { "image": "/img/gallery/2.jpg", "caption": "Networking Lounge" },
+      { "image": "/img/gallery/3.jpg", "caption": "Workshop track" },
+      { "image": "/img/gallery/4.jpg", "caption": "Evening event" }
+    ]
+  }
+}

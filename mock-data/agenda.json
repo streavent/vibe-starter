@@ -1,0 +1,82 @@
+{
+  "tabs": [
+    {
+      "name": "Tag 1 — 11. Mai",
+      "tabDate": "2027-05-11",
+      "entries": [
+        {
+          "id": "ag-keynote",
+          "topic": "Eröffnungs-Keynote: Die Bedrohungslage 2027",
+          "description": "Ein schonungsloser Blick auf die aktuelle Cyber-Bedrohungslage und was Organisationen jetzt tun müssen.",
+          "date": "2027-05-11T09:00:00.000Z",
+          "dateEnd": "2027-05-11T10:00:00.000Z",
+          "timeText": "",
+          "stage": "Main Stage",
+          "type": ["Keynote"],
+          "category": ["Leadership"],
+          "headerImg": "/img/sessions/keynote.jpg",
+          "speakers": [
+            {
+              "speakerId": "spk-anna",
+              "name": "Dr. Anna Schmidt",
+              "image": "/img/speakers/anna.jpg",
+              "company": "TU München",
+              "position": "Professorin",
+              "link": "https://example.com/anna"
+            }
+          ]
+        },
+        {
+          "id": "ag-zerotrust",
+          "topic": "Zero Trust in der Praxis",
+          "description": "Wie man Zero-Trust-Architekturen in gewachsenen Konzern-IT-Landschaften wirklich ausrollt.",
+          "date": "2027-05-11T11:00:00.000Z",
+          "dateEnd": "2027-05-11T12:00:00.000Z",
+          "timeText": "",
+          "stage": "Stage B",
+          "type": ["Talk"],
+          "category": ["Architecture"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-max",
+              "name": "Max Müller",
+              "image": "/img/speakers/max.jpg",
+              "company": "Allianz SE",
+              "position": "CISO",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tag 2 — 12. Mai",
+      "tabDate": "2027-05-12",
+      "entries": [
+        {
+          "id": "ag-quantum",
+          "topic": "Post-Quanten-Kryptografie: Was jetzt zählt",
+          "description": "Eine praxisnahe Einführung in die Migration zu quantensicheren Verfahren.",
+          "date": "2027-05-12T10:00:00.000Z",
+          "dateEnd": "2027-05-12T11:00:00.000Z",
+          "timeText": "",
+          "stage": "Main Stage",
+          "type": ["Workshop"],
+          "category": ["Quantum"],
+          "headerImg": "/img/sessions/quantum.jpg",
+          "speakers": [
+            {
+              "speakerId": "spk-leila",
+              "name": "Leila Hassan",
+              "image": "/img/speakers/leila.jpg",
+              "company": "Fraunhofer SIT",
+              "position": "Quantum Security Lead",
+              "link": "https://example.com/leila"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

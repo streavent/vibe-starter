@@ -1,0 +1,13 @@
+{
+  "name": "CyberSummit 2027",
+  "description": "Drei Tage 360°-Perspektive auf Cybersecurity — Leadership, KI, Compliance und Quantentechnologie.",
+  "startDate": "2027-05-11T09:00:00.000Z",
+  "endDate": "2027-05-13T17:00:00.000Z",
+  "timezone": "Europe/Berlin",
+  "location": "Allianz Arena, München",
+  "organizer": "CyberSummit GmbH",
+  "url": "https://cybersummit-2027.streavent.de",
+  "category": "Cybersecurity",
+  "tags": ["Security", "KI", "Compliance", "Quantum"],
+  "type": "conference"
+}

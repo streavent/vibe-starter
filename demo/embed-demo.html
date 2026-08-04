@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&lt;sv-agenda&gt; Embed Demo</title>
+
+    <!-- Self-contained: stub fetch with a sample /public/agenda payload so this page
+         renders WITHOUT a backend. Must run before the bundle upgrades the elements.
+         For a real backend, delete this block and set window.SV_API_BASE instead. -->
+    <script>
+      const SAMPLE = {
+        status: "success",
+        data: {
+          branding: { name: "CyberSummit 2027", logo: "/logo.png" },
+          language: "de",
+          agenda: {
+            tabs: [
+              {
+                name: "Tag 1",
+                entries: [
+                  {
+                    topic: "Eröffnungs-Keynote",
+                    date: "2027-05-11T09:00:00Z",
+                    stage: "Main Stage",
+                    description: "Die Bedrohungslage 2027.",
+                  },
+                  {
+                    topic: "Zero Trust in der Praxis",
+                    date: "2027-05-11T11:00:00Z",
+                    stage: "Stage B",
+                    description: "Architekturen, die wirklich tragen.",
+                  },
+                  {
+                    topic: "Post-Quanten-Kryptografie",
+                    date: "2027-05-11T14:00:00Z",
+                    stage: "Lab",
+                    description: "Was jetzt zählt.",
+                  },
+                ],
+              },
+              {
+                name: "Tag 2",
+                entries: [
+                  {
+                    topic: "KI-gestützte Detection",
+                    date: "2027-05-12T10:00:00Z",
+                    stage: "Main Stage",
+                    description: "Angriffe früher sehen.",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      };
+      window.fetch = (url) => {
+        console.log("[demo] stubbed fetch:", url);
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(SAMPLE),
+        });
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 0 16px;
+        color: #111827;
+      }
+      h2 {
+        margin-top: 40px;
+      }
+      .note {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+      /* Consumer-side restyle of the default look via CSS custom properties: */
+      #branded {
+        --sv-accent: #16a34a;
+      }
+      /* A fully custom template needs no default CSS — the consumer owns it: */
+      .card-list .ev {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 14px;
+        margin: 10px 0;
+      }
+      .card-list .ev h3 {
+        margin: 0 0 6px;
+      }
+      .card-list .ev .when {
+        color: #4f46e5;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>&lt;sv-agenda&gt; — Embed Demo</h1>
+    <p class="note">
+      One bundle (<code>@streavent/sv-runtime</code>, ~20&nbsp;KB), three
+      usages. Fetch is stubbed locally so it renders with no backend. Open the
+      console to see the stubbed requests.
+    </p>
+
+    <h2>1. Zero-config (default template + default CSS)</h2>
+    <p class="note">Just the tag — copy &amp; paste, works immediately.</p>
+    <sv-agenda event="demo-event"></sv-agenda>
+
+    <h2>2. Restyled via CSS custom property (<code>--sv-accent</code>)</h2>
+    <p class="note">
+      Same default markup, different accent — no template needed.
+    </p>
+    <sv-agenda id="branded" event="demo-event" day="1"></sv-agenda>
+
+    <h2>3. Fully custom template (renderless)</h2>
+    <p class="note">
+      Consumer supplies its own markup; the component only binds data.
+    </p>
+    <sv-agenda class="card-list" event="demo-event">
+      <template>
+        <div class="ev">
+          <span class="when" data-bind="date" data-format="time"></span>
+          <h3 data-bind="topic"></h3>
+          <p data-bind="description"></p>
+        </div>
+      </template>
+      <template slot="empty"><p>Programm folgt.</p></template>
+    </sv-agenda>
+
+    <script src="../node_modules/@streavent/sv-runtime/dist/sv-runtime.js"></script>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Detailseite: Meta an den Speaker gebunden -->
+    <title data-bind="name"></title>
+    <meta name="description" data-bind="bio" />
+    <meta property="og:image" data-bind="image" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"
+          >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
+        >
+        <nav class="main-nav">
+          <a href="/programm">Programm</a>
+          <a href="/speakers">Speaker</a>
+          <a href="/sponsoren">Sponsoren &amp; Partner</a>
+          <a href="/kontakt">Kontakt</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <nav class="lang-switch" aria-label="Sprache">
+            <sv-langswitch>
+              <template
+                ><a data-bind="url" class="lang"
+                  ><span data-bind="code"></span></a
+              ></template>
+            </sv-langswitch>
+          </nav>
+          <a href="/shop" class="btn btn-primary" data-sv-field="nav.tickets"
+            >Warteliste 2027</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <section class="detail">
+      <div class="container">
+        <a href="/speakers" class="back">← Alle Speaker</a>
+        <div
+          style="
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+          "
+        >
+          <img
+            data-bind="image"
+            alt=""
+            style="
+              width: 140px;
+              height: 140px;
+              border-radius: 50%;
+              object-fit: cover;
+              border: 2px solid var(--border);
+            "
+          />
+          <div>
+            <h1 style="margin: 0" data-bind="name"></h1>
+            <p style="margin: 4px 0; color: var(--accent-2)">
+              <span data-bind="position"></span> ·
+              <span data-bind="company"></span>
+            </p>
+            <div
+              class="speaker-links"
+              style="display: flex; gap: 14px; margin-top: 10px"
+            >
+              <a
+                class="btn btn-ghost"
+                data-sv-show="website"
+                data-bind="website"
+                >Website</a
+              >
+              <a
+                class="btn btn-ghost"
+                data-sv-show="linkedIn"
+                data-bind="linkedIn"
+                >LinkedIn</a
+              >
+              <a
+                class="btn btn-ghost"
+                data-sv-show="twitter"
+                data-bind="twitter"
+                >X</a
+              >
+            </div>
+          </div>
+        </div>
+        <p style="max-width: 680px; margin-top: 28px" data-bind="bio"></p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy" data-sv-field="footer.copyright">
+          © 2027 CyberSummit GmbH. Alle Rechte vorbehalten.
+        </p>
+        <nav class="footer-nav">
+          <a href="/faq">FAQ</a>
+          <a href="/kontakt">Kontakt</a>
+          <a
+            href="https://example.com/impressum"
+            data-sv-field="footer.imprint"
+            data-sv-type="link"
+            >Impressum</a
+          >
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

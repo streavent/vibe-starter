@@ -1,0 +1,23 @@
+{
+  "name": "CyberSummit 2027",
+  "languages": ["de", "en"],
+  "defaultLanguage": "de",
+  "dynamicPages": [
+    {
+      "template": "speaker.html",
+      "collection": "speakers",
+      "route": "/speakers/:slug",
+      "slugFrom": "name"
+    },
+    {
+      "template": "session.html",
+      "collection": "agenda",
+      "route": "/programm/:slug",
+      "slugFrom": "topic"
+    }
+  ],
+  "seo": {
+    "defaultOgImage": "/img/og-default.jpg",
+    "titleSuffix": " · CyberSummit 2027"
+  }
+}

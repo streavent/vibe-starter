@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kontakt</title>
+    <meta name="description" content="Kontakt zum CyberSummit-Team." />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"
+          >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
+        >
+        <nav class="main-nav">
+          <a href="/programm">Programm</a>
+          <a href="/speakers">Speaker</a>
+          <a href="/sponsoren">Sponsoren &amp; Partner</a>
+          <a href="/kontakt">Kontakt</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <nav class="lang-switch" aria-label="Sprache">
+            <sv-langswitch>
+              <template
+                ><a data-bind="url" class="lang"
+                  ><span data-bind="code"></span></a
+              ></template>
+            </sv-langswitch>
+          </nav>
+          <a href="/shop" class="btn btn-primary" data-sv-field="nav.tickets"
+            >Warteliste 2027</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <section class="detail">
+      <div class="container">
+        <p class="eyebrow">Kontakt</p>
+        <h1 data-sv-field="contact.title">Sprich mit uns</h1>
+        <p
+          style="color: var(--muted); max-width: 560px"
+          data-sv-field="contact.intro"
+        >
+          Fragen zu Tickets, Programm oder Partnerschaften? Schreib uns.
+        </p>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-top: 32px;
+          "
+        >
+          <!-- Eigenes Formular (keine Streavent-Anbindung) -->
+          <!-- action durch den eigenen Formular-Endpoint ersetzen -->
+          <form class="form" method="post" action="/contact">
+            <label>Name <input type="text" name="name" required /></label>
+            <label>E-Mail <input type="email" name="email" required /></label>
+            <label
+              >Nachricht <textarea name="message" rows="5" required></textarea>
+            </label>
+            <button type="submit" class="btn btn-primary">Absenden</button>
+          </form>
+
+          <!-- Venue über <sv-event> -->
+          <div>
+            <h3>Veranstaltungsort</h3>
+            <sv-event>
+              <p style="font-weight: 600" data-bind="location"></p>
+              <p style="color: var(--muted)">
+                <span data-bind="startDate" data-format="date"></span> –
+                <span data-bind="endDate" data-format="date"></span>
+              </p>
+            </sv-event>
+            <p style="color: var(--muted); margin-top: 16px">
+              <!-- Karte: Designer bettet selbst ein Map-Embed ein -->
+              <em
+                >Hier könnte ein Karten-Embed stehen (eigenes Embed, siehe
+                Contract Kap. 5.5).</em
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy" data-sv-field="footer.copyright">
+          © 2027 CyberSummit GmbH. Alle Rechte vorbehalten.
+        </p>
+        <nav class="footer-nav">
+          <a href="/faq">FAQ</a>
+          <a href="/kontakt">Kontakt</a>
+          <a
+            href="https://example.com/impressum"
+            data-sv-field="footer.imprint"
+            data-sv-type="link"
+            >Impressum</a
+          >
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

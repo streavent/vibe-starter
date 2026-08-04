@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ</title>
+    <meta name="description" content="Häufige Fragen zum CyberSummit 2027." />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"
+          >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
+        >
+        <nav class="main-nav">
+          <a href="/programm">Programm</a>
+          <a href="/speakers">Speaker</a>
+          <a href="/sponsoren">Sponsoren &amp; Partner</a>
+          <a href="/kontakt">Kontakt</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <nav class="lang-switch" aria-label="Sprache">
+            <sv-langswitch>
+              <template
+                ><a data-bind="url" class="lang"
+                  ><span data-bind="code"></span></a
+              ></template>
+            </sv-langswitch>
+          </nav>
+          <a href="/shop" class="btn btn-primary" data-sv-field="nav.tickets"
+            >Warteliste 2027</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <section class="detail">
+      <div class="container" style="max-width: 760px">
+        <p class="eyebrow">FAQ</p>
+        <h1 data-sv-field="faq.title">Häufige Fragen</h1>
+
+        <!-- Statisches Markup: der Designer pflegt die FAQ-Einträge selbst; Texte sind editierbar -->
+        <div style="margin-top: 24px">
+          <div class="faq-item">
+            <h3 data-sv-field="faq.1.q">
+              Wann und wo findet der CyberSummit 2027 statt?
+            </h3>
+            <p data-sv-field="faq.1.a">
+              Vom 11.–13. Mai 2027 in der Allianz Arena in München.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3 data-sv-field="faq.2.q">Gibt es noch Tickets?</h3>
+            <p data-sv-field="faq.2.a">
+              Die regulären Tickets sind vergeben. Trag dich in die Warteliste
+              2027 ein.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3 data-sv-field="faq.3.q">Werden die Sessions aufgezeichnet?</h3>
+            <p data-sv-field="faq.3.a">
+              Ausgewählte Keynotes werden aufgezeichnet und Teilnehmenden im
+              Nachgang bereitgestellt.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy" data-sv-field="footer.copyright">
+          © 2027 CyberSummit GmbH. Alle Rechte vorbehalten.
+        </p>
+        <nav class="footer-nav">
+          <a href="/faq">FAQ</a>
+          <a href="/kontakt">Kontakt</a>
+          <a
+            href="https://example.com/impressum"
+            data-sv-field="footer.imprint"
+            data-sv-type="link"
+            >Impressum</a
+          >
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

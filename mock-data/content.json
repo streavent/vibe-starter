@@ -1,0 +1,13 @@
+{
+  "_comment": "data-sv-field-Werte pro Sprache. Leer/fehlend = Default aus dem Markup wird genutzt. Hier sind nur einige EN-Übersetzungen gepflegt, um i18n zu demonstrieren.",
+  "de": {},
+  "en": {
+    "hero.title": "Connect. Protect. Transform.",
+    "hero.subtitle": "Three days of a 360° perspective on cybersecurity.",
+    "hero.cta": "Join the waitlist",
+    "nav.tickets": "Waitlist 2027",
+    "speakers.heading": "Our speakers",
+    "sponsors.heading": "Sponsors & partners",
+    "footer.copyright": "© 2027 CyberSummit GmbH. All rights reserved."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "streavent-vibe-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sample Vibe Site — the designer's deliverable, consuming the @streavent/sv-runtime package via the `sv` CLI.",
+  "scripts": {
+    "start": "sv dev",
+    "validate": "sv validate",
+    "package": "sv package"
+  },
+  "devDependencies": {
+    "@streavent/sv-runtime": "^1.0.0"
+  }
+}

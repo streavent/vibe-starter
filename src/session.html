@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Detailseite: Meta an den Datensatz gebunden -->
+    <title data-bind="topic"></title>
+    <meta name="description" data-bind="description" />
+    <meta property="og:image" data-bind="headerImg" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"
+          >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
+        >
+        <nav class="main-nav">
+          <a href="/programm">Programm</a>
+          <a href="/speakers">Speaker</a>
+          <a href="/sponsoren">Sponsoren &amp; Partner</a>
+          <a href="/kontakt">Kontakt</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <nav class="lang-switch" aria-label="Sprache">
+            <sv-langswitch>
+              <template
+                ><a data-bind="url" class="lang"
+                  ><span data-bind="code"></span></a
+              ></template>
+            </sv-langswitch>
+          </nav>
+          <a href="/shop" class="btn btn-primary" data-sv-field="nav.tickets"
+            >Warteliste 2027</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <section class="detail">
+      <div class="container">
+        <a href="/programm" class="back">← Zurück zum Programm</a>
+        <h1 data-bind="topic"></h1>
+        <p class="meta" style="color: var(--accent-2)">
+          <span data-bind="date" data-format="datetime"></span> ·
+          <span data-bind="stage"></span>
+        </p>
+        <img class="lead-img" data-bind="headerImg" alt="" />
+        <p data-bind="description"></p>
+
+        <h3 style="margin-top: 32px">Speaker</h3>
+        <div class="grid grid-4">
+          <sv-each field="speakers">
+            <template>
+              <div class="card speaker-card">
+                <img data-bind="image" alt="" />
+                <h3 data-bind="name"></h3>
+                <div class="org" data-bind="company"></div>
+              </div>
+            </template>
+          </sv-each>
+        </div>
+
+        <p style="margin-top: 32px">
+          <a href="/shop" class="btn btn-primary">Ticket sichern</a>
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy" data-sv-field="footer.copyright">
+          © 2027 CyberSummit GmbH. Alle Rechte vorbehalten.
+        </p>
+        <nav class="footer-nav">
+          <a href="/faq">FAQ</a>
+          <a href="/kontakt">Kontakt</a>
+          <a
+            href="https://example.com/impressum"
+            data-sv-field="footer.imprint"
+            data-sv-type="link"
+            >Impressum</a
+          >
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

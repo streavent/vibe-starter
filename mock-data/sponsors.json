@@ -1,0 +1,46 @@
+[
+  {
+    "_id": "cat-gold",
+    "name": "Gold",
+    "color": "#d4af37",
+    "sponsors": [
+      {
+        "_id": "sp-aegis",
+        "name": "Aegis Security",
+        "logoUrl": "/img/sponsors/aegis.svg",
+        "bannerUrl": "/img/sponsors/aegis-banner.jpg",
+        "description": "Managed Detection & Response für den Mittelstand.",
+        "website": "https://example.com/aegis",
+        "websiteLabel": "Zur Website",
+        "documents": [{ "url": "/img/sponsors/aegis.pdf", "fileName": "Aegis-Onepager.pdf" }]
+      },
+      {
+        "_id": "sp-quantix",
+        "name": "Quantix",
+        "logoUrl": "/img/sponsors/quantix.svg",
+        "bannerUrl": "",
+        "description": "Post-Quanten-Verschlüsselung as a Service.",
+        "website": "https://example.com/quantix",
+        "websiteLabel": "",
+        "documents": []
+      }
+    ]
+  },
+  {
+    "_id": "cat-silver",
+    "name": "Silber",
+    "color": "#9ca3af",
+    "sponsors": [
+      {
+        "_id": "sp-northgate",
+        "name": "Northgate Cloud",
+        "logoUrl": "/img/sponsors/northgate.svg",
+        "bannerUrl": "",
+        "description": "Compliance-konforme Cloud-Infrastruktur aus Deutschland.",
+        "website": "https://example.com/northgate",
+        "websiteLabel": "",
+        "documents": []
+      }
+    ]
+  }
+]
