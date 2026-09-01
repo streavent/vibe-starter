@@ -282,6 +282,11 @@ Die eine maschinenlesbare Datei im Projekt-Root, in der du das deklarierst, was 
   "seo": {
     "defaultOgImage": "/img/og-default.jpg",
     "titleSuffix": " · TechConf 2026"
+  },
+
+  // Nur wenn diese Site eine bestehende ABLÖST: alte Adressen auf ihr neues Zuhause
+  "redirects": {
+    "/tickets.html": "/teilnehmen"
   }
 }
 ```
@@ -301,12 +306,42 @@ Die eine maschinenlesbare Datei im Projekt-Root, in der du das deklarierst, was 
 | `dynamicPages[].slugFrom`   | ✅\*    | Feld, aus dem der Slug erzeugt wird                        |
 | `seo.defaultOgImage`        | –       | Fallback-OG-Bild (Pfad im Bundle)                          |
 | `seo.titleSuffix`           | –       | Suffix, das an jeden Seitentitel gehängt wird              |
+| `redirects`                 | –       | `{ alt: neu }` für Adressen einer abgelösten Site (s. u.)  |
 
 > \* Pflicht, sobald ein `dynamicPages`-Eintrag existiert.
 >
 > **Verfügbare Collections** für Detailseiten (was die Runtime auflöst): `speakers`, `agenda`.
 > Weitere folgen — eine erfundene Collection schlägt bei der Validierung fehl. (Sponsoren-
 > Detailseiten sind noch nicht verdrahtet.)
+
+#### Alte Adressen mitnehmen: `redirects`
+
+Wenn deine Site eine bestehende ersetzt, zeigen Links aus Suchergebnissen, Presseartikeln und
+Social-Posts weiter auf die **alten** Adressen. Die Pipeline kann sie nicht erraten — sie kennt
+nur die Seiten, die es jetzt gibt, und ein Pfad, den es nicht mehr gibt, sieht für sie genauso
+aus wie einer, den es nie gab.
+
+**Den häufigsten Fall musst du nicht deklarieren.** War die alte Site eine Sammlung von
+`.html`-Dateien und deine hat saubere URLs, erledigt das die Auslieferung von selbst: Die
+Endung fällt weg, und wenn der Rest ein Pfad ist, den deine Site wirklich ausliefert, geht ein
+`301` darauf. `/programm.html` → `/programm`, `/index.html` → `/`. Ohne Zutun, für alle Seiten.
+
+`redirects` ist für die Umbenennungen, die diese Regel **nicht** erraten kann:
+
+```jsonc
+"redirects": {
+  "/tickets.html": "/teilnehmen",   // Seite heisst jetzt anders
+  "/team.html": "/ueber-uns"
+}
+```
+
+Beides root-absolut (führender `/`). Die Validierung lehnt ab, was schlimmer wäre als kein
+Redirect: eine Schleife, ein Ziel auf einer [reservierten App-Route](#35-reservierte-routen--namen)
+— und eine Quelle, die deine Site selbst ausliefert, denn das machte diese Seite dauerhaft
+unerreichbar.
+
+> Warum das genau genommen werden muss: Ein `301` wird vom Browser dauerhaft gemerkt. Ein
+> falscher Eintrag verschwindet deshalb nicht dadurch, dass du ihn wieder herausnimmst.
 
 ### 3.5 Reservierte Routen / Namen
 
@@ -515,12 +550,65 @@ Regeln:
 - Bei `sv-gallery` braucht die Region den Feldschlüssel, wenn sie die Komponente nicht
   umschließt — `data-sv-widget-field="…"`.
 
+#### `data-sv-widget-entry` — einen einzelnen Datensatz treffen
+
+Der Rahmen um den ganzen Block ist die richtige Antwort für eine Liste, die als Liste gepflegt
+wird. Für eine Agenda ist er es nicht: Der Kunde zeigt auf den 11:30-Panel, weil er genau den
+ändern will — und bekäme eine Seite mit achtundvierzig Zeilen zum Suchen.
+
+Deshalb stempelt der Renderer im Editor-Modus auf jede gerenderte Karte die Id ihres
+Datensatzes (`data-sv-widget-entry="<id>"`). Klick auf die Karte → das CMS öffnet genau diesen
+Agendapunkt. Im veröffentlichten HTML steht das Attribut nicht.
+
+**Du musst dafür nichts tun** — außer in genau einem Fall: Wenn dein JavaScript die Karten
+selbst neu baut (siehe oben), musst du die Id mitnehmen, sonst kennt der Editor nur den Block.
+
+```js
+// beim Auslesen der gerenderten Quelle
+var id = card.getAttribute('data-sv-widget-entry') || '';
+// beim Bauen der eigenen Kachel wieder mitgeben
+html += '<div class="my-card"' + (id ? ' data-sv-widget-entry="' + id + '"' : '') + '>…</div>';
+```
+
+Regeln:
+
+- Nur Streavent-Daten haben eine Id. Collection-Einträge werden über ihre Position adressiert
+  (`data-sv-widget-item`), die der Editor selbst setzt.
+- Ob ein Klick auf einen einzelnen Datensatz überhaupt angeboten wird, entscheidet das CMS —
+  nur dort ist bekannt, ob das Zielmodul einen einzelnen Datensatz öffnen kann. Aktuell:
+  `sv-agenda`. Für alles andere bleibt der Block-Rahmen stehen.
+- Ein Datensatz ohne Id bekommt keinen Stempel; dann greift wieder der Block-Rahmen.
+
+#### Wenn deine Seite sich neu rendert
+
+Ein Tab-Wechsel, ein Filter, ein Zeitraster, das sich in JavaScript neu aufbaut: Der Editor
+liest das Dokument danach erneut und findet die neuen Knoten von selbst. Du musst nur dafür
+sorgen, dass die Marker mitkommen — `data-sv-field` an den Texten, `data-sv-widget-entry` an
+den Karten.
+
+**Verschiebe markierte Knoten, statt sie neu zu schreiben.** Ein `data-sv-field`-Element, das
+du per `appendChild` an seinen Platz bewegst, behält seine Identität und den Cursor des
+Kunden; eines, das du als HTML-String neu erzeugst, ist ein anderer Knoten — er wird zwar
+wieder editierbar, aber eine laufende Eingabe geht verloren.
+
+```js
+// Der gepflegte Tagestext gehört dem Content-Store, nicht deinem Renderer:
+// ihn per textContent neu zu schreiben, wirft den Feldmarker weg.
+out.innerHTML = tabs + '<div class="head-slot"></div>' + grid;
+out.querySelector('.head-slot').append(headOf(day)); // derselbe Knoten, neuer Platz
+```
+
 ### 4.7 Gute vs. schlechte editierbare Felder
 
 - ✅ Markiere **Inhalt**: Überschriften, Fließtexte, Button-Labels, Bilder.
-- ⛔ Markiere **nichts Strukturelles/Dekoratives**, dessen Länge das Layout sprengt (z. B. ein
-  einzelnes Wort in einem engen Badge, das dann zum Absatz wird). Gib editierbaren Texten im
-  Design genug Raum für realistische Kundeneingaben.
+- ✅ Auch **Kennzahlen und Kurzlabels** sind Inhalt: „75+ Speaker:innen", „3 Plätze frei",
+  „Tag 1 · Di, 11. Mai 2027". Der Kunde ändert genau die — ein Feld wegzulassen, weil es kurz
+  ist, macht die Zahl zu Struktur, die nur du noch anfassen kannst.
+- ⛔ Nicht markieren: reine **Icons und Zierzeichen** (`×`, `●`, `✓`) und alles, was dein
+  eigenes JavaScript ohnehin überschreibt.
+- 📐 Wenn ein Feld eng ist, ist die Antwort **Platz im Design**, nicht ein fehlendes Feld:
+  `min-width`, Umbruch erlauben, `text-wrap: balance`. Ein Badge, das bei zwei Wörtern mehr
+  bricht, ist ein Layoutfehler — kein Grund, dem Kunden seinen eigenen Text wegzunehmen.
 
 ### 4.8 Mehrsprachigkeit (Kurz-Hinweis)
 
@@ -571,6 +659,7 @@ löschen, sortieren und alle Felder bearbeiten — aber nie die Felder selbst ä
 | `link`     | `{ label, href }`  | Text + URL                           |
 | `cta`      | `{ label, href }`  | wie `link`, als Button               |
 | `image`    | `{ src, alt }`     | Upload + Cropper                     |
+| `video`    | String (URL)       | Upload **oder** YouTube-/Vimeo-Link  |
 | `color`    | `#rrggbb`          | Farbwähler                           |
 | `group`    | Objekt             | Unterformular                        |
 
@@ -578,6 +667,39 @@ löschen, sortieren und alle Felder bearbeiten — aber nie die Felder selbst ä
 ein `group` in einem `group` lehnt der Validator ab.
 
 > `slug` und `url` sind reserviert: die Laufzeit setzt sie pro Eintrag (siehe Schritt 3).
+
+##### `video` ist `text` mit einer besseren Eingabe
+
+Der gespeicherte Wert ist derselbe blanke String wie bei `text` — ein Pfad im Bundle
+(`/static/video/aftermovie.mp4`), die URL einer hochgeladenen Datei oder ein YouTube-/
+Vimeo-Link. Binde ihn also genauso: `data-bind="video"`, `data-bind-attr="data-lightbox:video"`.
+
+Der Unterschied liegt allein im CMS: `text` zwingt den Organisator, einen Pfad zu **tippen**,
+den er nur kennt, wenn er das Bundle gesehen hat. `video` gibt ihm einen Upload-Knopf und ein
+Linkfeld. Deklariere `video` überall dort, wo heute ein Pfad in einem `text`-Feld steht.
+
+> **Deine Wiedergabe muss beide Fälle können.** Eine eigene Lightbox, die den Wert in ein
+> `<video src>` steckt, zeigt bei einem YouTube-Link nichts. Prüfe den Wert und baue im
+> Zweifel ein `<iframe>` — die Starter-Lightbox macht genau das vor.
+
+##### `section` — Überschriften im Eingabeformular
+
+Optional pro Feld der obersten Ebene:
+
+```jsonc
+{ "key": "seoTitle", "label": "Seitentitel", "type": "text", "section": "Suchmaschinen" }
+```
+
+Felder mit derselben `section` erscheinen im CMS zusammen unter dieser Überschrift, in der
+Reihenfolge des Schemas — auch dann, wenn das Schema sie auseinanderreißt; die Überschrift
+steht dort, wo ihr erstes Feld deklariert ist. Felder ohne `section` bilden einen eigenen
+Block ohne Überschrift. Am Wert, am Rendern und an der Bindung ändert das **nichts** — es ist
+reine Lesbarkeit des Formulars.
+
+Ab etwa acht Feldern lohnt es sich: ein Stream mit fünfzehn Feldern ist ohne Abschnitte eine
+einzige Spalte gleich aussehender Eingaben, in der man das gesuchte Feld nur findet, wenn man
+das Schema auswendig kennt. Benenne die Abschnitte nach dem, was auf der **Seite** passiert
+(„Kopfbereich", „Programm", „Suchmaschinen"), nicht nach dem Datentyp („Texte", „Bilder").
 
 #### Schritt 2 — Startdaten mitliefern
 
@@ -721,6 +843,8 @@ die `data-bind`-Stellen.
 | **Verschachteltes Feld** | `data-bind="eventDateTime.startDate"`                        | Punkt-Notation für verschachtelte Objekte                                                    |
 | **Limit**                | `<sv-speakers limit="6">`                                    | Maximale Anzahl                                                                              |
 | **Sortierung**           | `sort="name"` / `sort="-date"`                               | Sortierfeld (`-` = absteigend)                                                               |
+| **Filter**               | `filter="stage:Hauptbühne"`                                  | Nur Einträge, deren Feld passt (→ 5.2.2)                                                     |
+| **Ausschluss**           | `exclude="category:Stream"`                                  | Einträge, deren Feld passt, **weglassen** (→ 5.2.2)                                          |
 
 > **Default-Markup:** Lässt du das `<template>` weg, rendert die Komponente ein schlichtes
 > Standard-Layout. Für volle Kontrolle nutze immer ein eigenes `<template>`.
@@ -776,6 +900,74 @@ Regeln:
 Der Validator meldet falsch geschriebene Paare und gesperrte Ziel-Attribute als **Fehler**,
 unbekannte Feldnamen als Warnung — beides schon beim `sv validate`, nicht erst im Render.
 
+### 5.2.2 Nur einen Ausschnitt zeigen: `filter`
+
+`filter="feld:wert"` reduziert eine Liste auf die Einträge, deren Feld passt — die Sessions
+einer Bühne, die Speaker eines Themas, die Sponsoren einer Stufe:
+
+```html
+<sv-agenda day="2" filter="stage:Hauptbühne">
+  <template>…</template>
+  <template slot="empty">…</template>
+</sv-agenda>
+```
+
+Regeln:
+
+- **Syntax:** `feld:wert`, getrennt am **ersten** Doppelpunkt — ein Feldname enthält keinen,
+  ein Wert durchaus („Panel: Recht").
+- **Groß-/Kleinschreibung und Leerzeichen sind egal.** Die Werte sind Freitext, den der
+  Veranstalter im CMS getippt hat; „Main Stage" und „main stage " sind dieselbe Bühne.
+- **Mehrwertige Felder** (`type`, `category`) passen, sobald **einer** ihrer Werte passt.
+- Ein Eintrag **ohne** das Feld passt nie.
+- Ein `filter` ohne verwertbares Paar filtert nicht — die Liste bleibt vollständig.
+- Kombinierbar mit `sort` und `limit` (Reihenfolge: filtern → sortieren → begrenzen).
+
+#### `exclude` — die Gegenrichtung
+
+`exclude="feld:wert"` lässt die passenden Einträge **weg**. Gleiche Syntax, gleiche
+Vergleichsregeln, gleiche Toleranz gegenüber einem unbrauchbaren Paar — nur umgekehrt. Es
+läuft **nach** `filter`, das Paar liest sich also als „diese Einträge, aber die nicht":
+
+```html
+<!-- Das Programm dieses Streams: die Sessions in seinem Raum, ohne den ganztägigen
+     Block, der der Stream selbst IST — der stünde sonst als Eintrag auf seiner eigenen
+     Seite. -->
+<sv-agenda data-bind-attr="filter:agendaFilter" exclude="category:Stream">
+  <template>…</template>
+  <template slot="empty"><p>Programm folgt.</p></template>
+</sv-agenda>
+```
+
+Ein Eintrag **ohne** das Feld wird nie ausgeschlossen — genau spiegelbildlich dazu, dass er
+auch nie zu einem `filter` passt.
+
+#### Der Ausschnitt kann aus dem Datensatz der Seite kommen
+
+Auf einer Detailseite (3.3) darf der **Wert** aus dem Eintrag stammen, zu dem die Seite gehört.
+Dafür schreibst du `data-bind-attr` **auf die Komponente selbst**:
+
+```html
+<!-- src/stream.html — jede Stream-Seite zeigt nur ihr eigenes Programm -->
+<sv-agenda day="2" data-bind-attr="filter:agendaFilter">
+  <template>…</template>
+  <template slot="empty"><p>Programm folgt.</p></template>
+</sv-agenda>
+```
+
+Der Eintrag `streams` hat dafür ein Feld `agendaFilter` mit z. B. `category:KI & Cyberabwehr`.
+Das ist der Punkt, an dem Collections sich auszahlen: Der Kunde legt einen fünften Stream an,
+bekommt seine Seite automatisch — **und** das passende Programm darauf, ohne dass jemand die
+Vorlage anfasst.
+
+Zwei Dinge dazu:
+
+- `data-bind-attr` **auf dem Host** bindet gegen den Datensatz der **Seite**. Dasselbe Attribut
+  **im `<template>`** bindet gegen das jeweilige Listen-Element — beides zugleich ist erlaubt
+  und meint zwei verschiedene Objekte.
+- Ist das Feld im Eintrag leer, wird gar kein `filter` geschrieben und die Liste bleibt
+  **vollständig**. Sichtbar und korrigierbar — im Zweifel setzt du zusätzlich ein `limit`.
+
 ---
 
 ### 5.3 Komponenten-Katalog
@@ -790,18 +982,43 @@ unbekannte Feldnamen als Warnung — beides schon beim `sv validate`, nicht erst
 
 #### `<sv-speakers>` — Speaker-Liste
 
-**Attribute:** `limit`, `sort` (`name`)
+**Attribute:** `limit`, `sort` (`name`), `filter`, `exclude`
 
-| Feld        | Typ    | Bedeutung          |
-| ----------- | ------ | ------------------ |
-| `name`      | string | Vollständiger Name |
-| `bio?`      | string | Kurzbiografie      |
-| `image?`    | string | Profilfoto-URL     |
-| `company?`  | string | Firma/Organisation |
-| `position?` | string | Jobtitel/Rolle     |
-| `website?`  | string | Website-URL        |
-| `linkedIn?` | string | LinkedIn-URL       |
-| `twitter?`  | string | Twitter/X-URL      |
+| Feld        | Typ     | Bedeutung                                     |
+| ----------- | ------- | --------------------------------------------- |
+| `name`      | string  | Vollständiger Name                            |
+| `bio?`      | string  | Kurzbiografie                                 |
+| `image?`    | string  | Profilfoto-URL                                |
+| `company?`  | string  | Firma/Organisation                            |
+| `position?` | string  | Jobtitel/Rolle                                |
+| `website?`  | string  | Website-URL                                   |
+| `linkedIn?` | string  | LinkedIn-URL                                  |
+| `twitter?`  | string  | Twitter/X-URL                                 |
+| `featured`  | boolean | Vom Veranstalter hervorgehoben (Haken im CMS) |
+| `category?` | string  | Speaker-Kategorie („Keynote", „Moderation")   |
+
+**Hervorgehobene Speaker bekommen eine eigene Reihe, keine Sortierung.** `featured` ist ein
+Haken pro Person im Speaker-Management — die zwei, drei Namen, die das Event verkaufen. Wenn
+sie oben und größer stehen sollen, sind das **zwei Blöcke**, und `filter`/`exclude` sind die
+beiden Hälften derselben Frage:
+
+```html
+<div class="speakers-feat">
+  <sv-speakers filter="featured:true"><template>…große Karte…</template></sv-speakers>
+</div>
+<div class="speakers">
+  <sv-speakers exclude="featured:true"><template>…normale Karte…</template></sv-speakers>
+</div>
+```
+
+Ein `sort` kann das nicht leisten: Sortieren ändert die Reihenfolge, nicht die Kachelgröße.
+
+**`category` ist die Kuratierungs-Zeile.** Sie kommt aus den Speaker-Kategorien des Events und
+ist die Antwort auf „woher kommt dieses kleine Label über/unter dem Namen": nicht aus einem
+Extra-Feld, sondern aus der Kategorie, die der Veranstalter der Person ohnehin schon gibt.
+Weil sie live aufgelöst wird, ändert eine Umbenennung im CMS jede Karte auf einmal. Sie kann
+leer sein — hänge ein `data-sv-show="category"` an das Element, sonst steht dort eine leere
+Zeile mit Abstand.
 
 ```html
 <sv-speakers sort="name">
@@ -825,22 +1042,26 @@ unbekannte Feldnamen als Warnung — beides schon beim `sv validate`, nicht erst
 Die Agenda ist nach **Tagen/Tabs** gegliedert, jeder Tag hat **Einträge** (= Sessions), jeder
 Eintrag hat **Speaker**. Du iterierst Einträge; mit `<sv-each>` gehst du in die Speaker.
 
-**Attribute:** `day` (Index, `1`-basiert, filtert auf einen Tag), `limit`
+**Attribute:** `day` (Index, `1`-basiert, filtert auf einen Tag), `limit`, `filter`
 
 **Eintrags-Felder:**
 
-| Feld           | Typ           | Bedeutung                                                 |
-| -------------- | ------------- | --------------------------------------------------------- |
-| `topic`        | string        | Titel der Session                                         |
-| `description?` | string (HTML) | Beschreibung                                              |
-| `date`         | ISO-string    | Start (mit `data-format` formatieren)                     |
-| `dateEnd?`     | ISO-string    | Ende                                                      |
-| `timeText?`    | string        | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden) |
-| `stage?`       | string        | Bühne/Raum                                                |
-| `type?`        | string[]      | Typ-Tags (z. B. „Keynote")                                |
-| `category?`    | string[]      | Kategorie-Tags                                            |
-| `headerImg?`   | string        | Header-Bild der Session                                   |
-| `speakers`     | array         | Speaker dieses Eintrags → mit `<sv-each>`                 |
+| Feld            | Typ           | Bedeutung                                                                 |
+| --------------- | ------------- | ------------------------------------------------------------------------- |
+| `topic`         | string        | Titel der Session                                                         |
+| `description?`  | string (HTML) | Beschreibung                                                              |
+| `date`          | ISO-string    | Start (mit `data-format` formatieren)                                     |
+| `dateEnd?`      | ISO-string    | Ende                                                                      |
+| `timeText?`     | string        | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden)                 |
+| `stage?`        | string        | Bühne/Raum                                                                |
+| `type?`         | string[]      | Typ-Tags (z. B. „Keynote")                                                |
+| `category?`     | string[]      | Kategorie-Tags                                                            |
+| `headerImg?`    | string        | Header-Bild der Session                                                   |
+| `speakers`      | array         | Speaker dieses Eintrags → mit `<sv-each>`                                 |
+| `highlight`     | boolean       | Optische Hervorhebung, im CMS pro Eintrag setzbar (→ `data-sv-show`)      |
+| `stageColor`    | string        | Farbe der Bühne aus den Event-Einstellungen (`''`, wenn keine hinterlegt) |
+| `typeColor`     | string        | Farbe des ersten passenden Typ-Tags                                       |
+| `categoryColor` | string        | Farbe des ersten passenden Kategorie-Tags                                 |
 
 **Speaker-Felder (innerhalb eines Eintrags):** `name`, `image?`, `company?`, `position?`, `link?`
 
@@ -869,7 +1090,8 @@ Eintrag hat **Speaker**. Du iterierst Einträge; mit `<sv-each>` gehst du in die
 Sponsoren sind in **Kategorien** (z. B. „Gold", „Silber") gruppiert. Du kannst flach iterieren
 (optional auf eine Kategorie gefiltert) oder nach Kategorie gruppieren.
 
-**Attribute:** `category` (Name, filtert auf eine Kategorie), `limit`
+**Attribute:** `group="category"`, `category` (Name, filtert auf eine Kategorie), `limit`,
+`sort`, `filter`, `exclude`
 
 **Sponsor-Felder:**
 
@@ -909,7 +1131,70 @@ Sponsoren sind in **Kategorien** (z. B. „Gold", „Silber") gruppiert. Du kann
 </sv-sponsors>
 ```
 
-> Kategorie-Felder (bei `group="category"`): `name`, `color`, `sponsors` (Array).
+**Kategorie-Felder** (bei `group="category"`):
+
+| Feld          | Typ     | Bedeutung                                        |
+| ------------- | ------- | ------------------------------------------------ |
+| `name`        | string  | Name der Stufe („Platin")                        |
+| `color`       | string  | Farbe der Stufe aus dem CMS                      |
+| `sponsors`    | array   | Die Sponsoren dieser Stufe                       |
+| `tier`        | number  | **Rang der Stufe in der Wall**, von 0 an         |
+| `targetCount` | number  | Geplante Plätze auf dieser Stufe (0 = kein Plan) |
+| `openCount`   | number  | Davon noch frei                                  |
+| `hasOpen`     | boolean | `openCount > 0`                                  |
+| `openIsOne`   | boolean | Genau ein Platz frei — für den Singular          |
+| `openSlots`   | array   | Ein Eintrag je freiem Platz, mit `position`      |
+
+##### Größen an die POSITION hängen, nicht an den Namen
+
+Eine Sponsorenwand hat eine Größenkaskade: Co-Host groß, Connect klein. Diese Kaskade gehört
+ins Stylesheet — aber sie darf nicht am Stufen**namen** hängen. Der Name ist die Beschriftung,
+die der Veranstalter jederzeit ändern darf; die Reihenfolge ist die Aussage. Deshalb gibt es
+`tier`: den Rang der Stufe, von oben gezählt.
+
+```html
+<sv-sponsors group="category">
+  <template>
+    <div class="tierband" data-bind-attr="data-tier:tier">…</div>
+  </template>
+</sv-sponsors>
+```
+
+```css
+.tierband[data-tier='0'] .ptile {
+  min-height: 180px;
+}
+.tierband[data-tier='1'] .ptile {
+  min-height: 136px;
+}
+```
+
+Aus „Platin" wird morgen „Premium" — mit `data-tier` bleibt die Wall stehen, mit
+`.tb-platin` bricht sie.
+
+##### Freie Plätze sind Teil der Aussage
+
+Eine Stufe trägt im CMS eine **geplante Anzahl**. Was davon noch nicht vergeben ist, kommt als
+`openSlots` an — eine Liste, über die du iterieren kannst, weil ein Template wiederholen aber
+nicht zählen kann. Eine Stufe mit Plan bleibt **auch ohne einen einzigen Sponsor sichtbar**;
+genau dafür ist sie da.
+
+```html
+<div class="wall">
+  <sv-each field="sponsors"><template>…Logo…</template></sv-each>
+  <sv-each field="openSlots">
+    <template><a class="ptile open" href="/sponsor-werden">Platz frei</a></template>
+  </sv-each>
+</div>
+<em data-sv-show="hasOpen">
+  <span data-bind="openCount"></span>
+  <span data-sv-show="openIsOne">Platz frei</span>
+  <span data-sv-hide="openIsOne">Plätze frei</span>
+</em>
+```
+
+Der Plural braucht zwei Elemente, weil die Bindung keine Bedingungen kennt — dafür bleiben
+beide Wörter im Markup, wo sie übersetzbar und im Editor pflegbar sind.
 
 #### `<sv-event>` — Daten des aktuellen Events
 
@@ -943,7 +1228,7 @@ Ein **Einzelobjekt** (kein `<template>`-Loop nötig): die Infos des Events, dem 
 
 Für Seiten, die **viele** Events listen (z. B. ein Veranstalter-Portal). Iteriert Events.
 
-**Attribute:** `limit`, `sort` (`date`)
+**Attribute:** `limit`, `sort` (`date`), `filter`
 
 | Feld                      | Typ        | Bedeutung             |
 | ------------------------- | ---------- | --------------------- |
@@ -1500,21 +1785,22 @@ Die harten Regeln auf einer Seite.
 | `data-sv-show / data-sv-hide="flag"`    | Markup abhängig von Boolean ein-/ausblenden                                            |
 | `<template slot="empty">`               | Leerzustand (Pflicht)                                                                  |
 | `limit` · `sort` (`-feld` = absteigend) | Anzahl / Sortierung                                                                    |
+| `filter="feld:wert"`                    | Nur Einträge, deren Feld passt (Groß-/Kleinschreibung egal)                            |
 
 ### Komponenten
 
-| Komponente                 | Liefert               | Wichtige Felder                                                                                                                               |
-| -------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`                                                         |
-| `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`                             |
-| `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                |
-| `<sv-sponsors>`            | Liste                 | `name`, `logoUrl`, `bannerUrl`, `description`, `website`, `websiteLabel`, `documents[]`                                                       |
-| `<sv-event>`               | Einzelobjekt          | `name`, `description`, `startDate`, `endDate`, `timezone`, `location`, `organizer`, `url`, `category`, `tags[]`, `type` (kein `image`/`logo`) |
-| `<sv-events>`              | Liste                 | `name`, `description`, `location`, `organizer`, `type`, `category`, `tags[]`, `duration`, `image`, `url`, `eventDateTime.*`                   |
-| `<sv-image field>`         | editierbares Bild     | Attribute: `field`, `default`, `sizes`, `loading`, `alt`                                                                                      |
-| `<sv-gallery field>`       | editierbare Galerie   | Item: `image`, `alt`, `caption`                                                                                                               |
-| `<sv-capacity>`            | Status (Einzelobjekt) | `atCapacity`, `waitlistEnabled`                                                                                                               |
-| `<sv-langswitch>`          | Sprachlinks           | `code`, `label`, `url`, `isCurrent`                                                                                                           |
+| Komponente                 | Liefert               | Wichtige Felder                                                                                                                                                            |
+| -------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`                                                                                      |
+| `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`, `highlight`, `stageColor`, `typeColor`, `categoryColor` |
+| `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                                             |
+| `<sv-sponsors>`            | Liste                 | `name`, `logoUrl`, `bannerUrl`, `description`, `website`, `websiteLabel`, `documents[]`                                                                                    |
+| `<sv-event>`               | Einzelobjekt          | `name`, `description`, `startDate`, `endDate`, `timezone`, `location`, `organizer`, `url`, `category`, `tags[]`, `type` (kein `image`/`logo`)                              |
+| `<sv-events>`              | Liste                 | `name`, `description`, `location`, `organizer`, `type`, `category`, `tags[]`, `duration`, `image`, `url`, `eventDateTime.*`                                                |
+| `<sv-image field>`         | editierbares Bild     | Attribute: `field`, `default`, `sizes`, `loading`, `alt`                                                                                                                   |
+| `<sv-gallery field>`       | editierbare Galerie   | Item: `image`, `alt`, `caption`                                                                                                                                            |
+| `<sv-capacity>`            | Status (Einzelobjekt) | `atCapacity`, `waitlistEnabled`                                                                                                                                            |
+| `<sv-langswitch>`          | Sprachlinks           | `code`, `label`, `url`, `isCurrent`                                                                                                                                        |
 
 ### Reservierte Routen (nur verlinken, keine eigenen Seiten)
 
