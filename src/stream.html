@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta darf an den Datensatz der Seite gebunden werden (Contract Kap. 9.3) -->
+    <title data-bind="seoTitle"></title>
+    <meta name="description" data-bind="claim" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"
+          >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
+        >
+        <nav class="main-nav">
+          <a href="/streams">Streams</a>
+          <a href="/programm">Programm</a>
+          <a href="/speakers">Speaker</a>
+          <a href="/sponsoren">Sponsoren &amp; Partner</a>
+          <a href="/kontakt">Kontakt</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <nav class="lang-switch" aria-label="Sprache">
+            <sv-langswitch>
+              <template
+                ><a data-bind="url" class="lang"
+                  ><span data-bind="code"></span></a
+              ></template>
+            </sv-langswitch>
+          </nav>
+          <a href="/shop" class="btn btn-primary" data-sv-field="nav.tickets"
+            >Warteliste 2027</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!--
+      Detailseite einer eigenen Collection: EIN Datensatz, deshalb data-bind direkt im
+      Markup und ohne <template>-Loop. Welcher Datensatz, entscheidet die URL
+      (streavent.config.json → dynamicPages → /streams/:slug).
+    -->
+    <section class="detail stream-detail" data-bind-attr="data-accent:color">
+      <div class="container" style="max-width: 820px">
+        <a class="back" href="/streams">← Alle Streams</a>
+        <h1 data-bind="name"></h1>
+        <p class="lead claim" data-bind="claim"></p>
+
+        <img class="lead-img" data-bind="img.src" alt="" data-bind-attr="alt:img.alt" />
+
+        <p data-bind="intro"></p>
+
+        <!-- Trailer: nur wenn im CMS einer hinterlegt ist. Der Wert kann eine Datei ODER
+             ein YouTube-/Vimeo-Link sein — /js/lightbox.js kann beides. -->
+        <p data-sv-show="trailer">
+          <button
+            type="button"
+            class="btn btn-ghost"
+            data-bind-attr="data-video:trailer"
+          >
+            ▶ Trailer ansehen
+          </button>
+        </p>
+
+        <h2>Das nimmst du mit</h2>
+        <!-- Wiederholtes Textfeld: der Eintrag IST der Wert, deshalb data-bind="." -->
+        <ul class="takeaways">
+          <sv-each field="takeaways">
+            <template>
+              <li data-bind="."></li>
+            </template>
+          </sv-each>
+        </ul>
+
+        <h2>Programm dieses Streams</h2>
+        <!--
+          Der Ausschnitt kommt aus dem Datensatz der Seite: data-bind-attr auf der
+          Komponente selbst schreibt den filter aus dem Feld `agendaFilter`. Legt der Kunde
+          einen fünften Stream an, bekommt er seine Seite MIT passendem Programm, ohne dass
+          jemand diese Vorlage anfasst.
+
+          `exclude` wirft den ganztägigen Block heraus, der der Stream selbst IST — er stünde
+          sonst als Eintrag auf seiner eigenen Seite.
+        -->
+        <sv-agenda data-bind-attr="filter:agendaFilter" exclude="category:Stream">
+          <template>
+            <div class="slot">
+              <time data-bind="date" data-format="time"></time>
+              <div>
+                <h4>
+                  <a data-bind="url"><span data-bind="topic"></span></a>
+                </h4>
+                <div class="meta">
+                  <span data-bind="dayName"></span> ·
+                  <span data-bind="stage"></span>
+                </div>
+                <sv-each field="speakers">
+                  <template>
+                    <span class="spk"
+                      ><img data-bind="image" alt="" /><span
+                        data-bind="name"
+                      ></span
+                    ></span>
+                  </template>
+                </sv-each>
+              </div>
+            </div>
+          </template>
+          <template slot="empty">
+            <p>Das Programm dieses Streams steht noch nicht.</p>
+          </template>
+        </sv-agenda>
+
+        <p data-sv-show="cta.href" style="margin-top: 24px">
+          <a class="btn btn-primary" data-bind="cta.href"
+            ><span data-bind="cta.label"></span
+          ></a>
+        </p>
+
+        <h2>Stimmen aus dem Stream</h2>
+        <!--
+          Wiederholte Gruppe: die Unterfelder wie gewohnt. Das Raster ist bewusst
+          `auto-fit` statt einer festen Spaltenzahl — wie viele Stimmen ein Stream hat,
+          entscheidet der Kunde, und eine einzelne Karte in einem Drei-Spalten-Raster
+          sieht aus wie ein Fehler.
+        -->
+        <div class="grid quote-grid">
+          <sv-each field="cases">
+            <template>
+              <blockquote class="card quote">
+                <p data-bind="quote"></p>
+                <div class="who">
+                  <strong data-bind="who"></strong> ·
+                  <span data-bind="role"></span>
+                </div>
+              </blockquote>
+            </template>
+            <template slot="empty">
+              <p style="color: var(--muted)">Noch keine Stimmen erfasst.</p>
+            </template>
+          </sv-each>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy" data-sv-field="footer.copyright">
+          © 2027 CyberSummit GmbH. Alle Rechte vorbehalten.
+        </p>
+        <nav class="footer-nav">
+          <a href="/faq">FAQ</a>
+          <a href="/kontakt">Kontakt</a>
+          <a
+            href="https://example.com/impressum"
+            data-sv-field="footer.imprint"
+            data-sv-type="link"
+            >Impressum</a
+          >
+        </nav>
+      </div>
+    </footer>
+    <script src="/js/accent.js"></script>
+    <script src="/js/lightbox.js"></script>
+  </body>
+</html>

@@ -2,6 +2,128 @@
   "name": "CyberSummit 2027",
   "languages": ["de", "en"],
   "defaultLanguage": "de",
+  "collections": [
+    {
+      "name": "streams",
+      "label": "Streams",
+      "itemLabel": "name",
+      "defaults": "collections/streams.json",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text",
+          "required": true,
+          "section": "Kopfbereich"
+        },
+        {
+          "key": "claim",
+          "label": "Claim",
+          "type": "text",
+          "section": "Kopfbereich"
+        },
+        {
+          "key": "color",
+          "label": "Akzentfarbe",
+          "type": "color",
+          "section": "Kopfbereich"
+        },
+        {
+          "key": "img",
+          "label": "Titelbild",
+          "type": "image",
+          "section": "Kopfbereich"
+        },
+        {
+          "key": "intro",
+          "label": "Einleitung",
+          "type": "text",
+          "section": "Inhalt"
+        },
+        {
+          "key": "takeaways",
+          "label": "Das nimmst du mit",
+          "type": "text",
+          "repeat": true,
+          "section": "Inhalt"
+        },
+        {
+          "key": "cases",
+          "label": "Stimmen",
+          "type": "group",
+          "repeat": true,
+          "section": "Inhalt",
+          "fields": [
+            {
+              "key": "who",
+              "label": "Wer",
+              "type": "text"
+            },
+            {
+              "key": "role",
+              "label": "Rolle",
+              "type": "text"
+            },
+            {
+              "key": "quote",
+              "label": "Zitat",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "key": "trailer",
+          "label": "Trailer",
+          "type": "video",
+          "section": "Medien"
+        },
+        {
+          "key": "agendaFilter",
+          "label": "Programm-Filter",
+          "type": "text",
+          "section": "Programm"
+        },
+        {
+          "key": "cta",
+          "label": "Button unter dem Programm",
+          "type": "cta",
+          "section": "Programm"
+        },
+        {
+          "key": "seoTitle",
+          "label": "Seitentitel",
+          "type": "text",
+          "section": "Suchmaschinen",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "faq",
+      "label": "FAQ",
+      "itemLabel": "question",
+      "defaults": "collections/faq.json",
+      "fields": [
+        {
+          "key": "question",
+          "label": "Frage",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "answer",
+          "label": "Antwort",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "topic",
+          "label": "Thema",
+          "type": "text"
+        }
+      ]
+    }
+  ],
   "dynamicPages": [
     {
       "template": "speaker.html",
@@ -14,10 +136,20 @@
       "collection": "agenda",
       "route": "/programm/:slug",
       "slugFrom": "topic"
+    },
+    {
+      "template": "stream.html",
+      "collection": "streams",
+      "route": "/streams/:slug",
+      "slugFrom": "name"
     }
   ],
   "seo": {
     "defaultOgImage": "/img/og-default.jpg",
     "titleSuffix": " · CyberSummit 2027"
+  },
+  "redirects": {
+    "/agenda.html": "/programm",
+    "/team.html": "/speakers"
   }
 }

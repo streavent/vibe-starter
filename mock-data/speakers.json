@@ -8,7 +8,9 @@
     "position": "Professorin für IT-Sicherheit",
     "website": "https://example.com/anna",
     "linkedIn": "https://linkedin.com/in/example-anna",
-    "twitter": "https://x.com/example_anna"
+    "twitter": "https://x.com/example_anna",
+    "featured": true,
+    "category": "Keynote"
   },
   {
     "id": "spk-max",
@@ -19,7 +21,9 @@
     "position": "Chief Information Security Officer",
     "website": "",
     "linkedIn": "https://linkedin.com/in/example-max",
-    "twitter": ""
+    "twitter": "",
+    "featured": false,
+    "category": "Track Lead"
   },
   {
     "id": "spk-leila",
@@ -30,7 +34,9 @@
     "position": "Quantum Security Lead",
     "website": "https://example.com/leila",
     "linkedIn": "",
-    "twitter": "https://x.com/example_leila"
+    "twitter": "https://x.com/example_leila",
+    "featured": true,
+    "category": "Keynote"
   },
   {
     "id": "spk-jonas",
@@ -41,6 +47,8 @@
     "position": "Partner, Cyber & Compliance",
     "website": "",
     "linkedIn": "https://linkedin.com/in/example-jonas",
-    "twitter": ""
+    "twitter": "",
+    "featured": false,
+    "category": "Moderation"
   }
 ]

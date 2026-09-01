@@ -1,0 +1,32 @@
+[
+  {
+    "question": "Wann und wo findet der CyberSummit 2027 statt?",
+    "answer": "Vom 11. bis 13. Mai 2027 in der Allianz Arena in München. Der Einlass öffnet täglich um 8:00 Uhr.",
+    "topic": "Anreise"
+  },
+  {
+    "question": "Gibt es noch Tickets?",
+    "answer": "Die regulären Tickets sind vergeben. Trag dich in die Warteliste 2027 ein — wir rücken laufend nach.",
+    "topic": "Tickets"
+  },
+  {
+    "question": "Kann ich mein Ticket auf eine andere Person übertragen?",
+    "answer": "Ja, bis 48 Stunden vor Beginn und kostenfrei. Die Umschreibung machst du selbst im Ticketbereich.",
+    "topic": "Tickets"
+  },
+  {
+    "question": "Werden die Sessions aufgezeichnet?",
+    "answer": "Ausgewählte Keynotes werden aufgezeichnet und Teilnehmenden im Nachgang bereitgestellt. Workshops bleiben bewusst unaufgezeichnet.",
+    "topic": "Programm"
+  },
+  {
+    "question": "Wie komme ich zur Allianz Arena?",
+    "answer": "Mit der U6 bis Fröttmaning, von dort sind es acht Minuten zu Fuß. Parkplätze am Gelände sind kostenpflichtig und begrenzt.",
+    "topic": "Anreise"
+  },
+  {
+    "question": "Gibt es vegetarisches und veganes Essen?",
+    "answer": "Ja, durchgehend. Weitere Unverträglichkeiten kannst du bei der Anmeldung angeben.",
+    "topic": "Vor Ort"
+  }
+]

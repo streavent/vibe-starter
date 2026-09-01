@@ -27,6 +27,28 @@
           ]
         },
         {
+          "id": "ag-board",
+          "topic": "Das Board-Gespräch: Risiko ohne Fachjargon",
+          "description": "Wie man ein Sicherheitsbudget verteidigt, ohne mit Angst zu argumentieren.",
+          "date": "2027-05-11T10:30:00.000Z",
+          "dateEnd": "2027-05-11T11:15:00.000Z",
+          "timeText": "",
+          "stage": "Main Stage",
+          "type": ["Talk"],
+          "category": ["Leadership"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-jonas",
+              "name": "Jonas Becker",
+              "image": "/img/speakers/jonas.jpg",
+              "company": "PwC",
+              "position": "Partner, Cyber & Compliance",
+              "link": ""
+            }
+          ]
+        },
+        {
           "id": "ag-zerotrust",
           "topic": "Zero Trust in der Praxis",
           "description": "Wie man Zero-Trust-Architekturen in gewachsenen Konzern-IT-Landschaften wirklich ausrollt.",
@@ -45,6 +67,41 @@
               "company": "Allianz SE",
               "position": "CISO",
               "link": ""
+            }
+          ]
+        },
+        {
+          "id": "ag-ki-stream",
+          "topic": "Stream: KI & Cyberabwehr",
+          "description": "Der ganztägige Rahmen des KI-Streams — die einzelnen Sessions stehen darunter.",
+          "date": "2027-05-11T09:00:00.000Z",
+          "dateEnd": "2027-05-11T18:00:00.000Z",
+          "timeText": "Ganztägig",
+          "stage": "Stage C",
+          "type": ["Track"],
+          "category": ["KI", "Stream"],
+          "headerImg": "",
+          "speakers": []
+        },
+        {
+          "id": "ag-soc",
+          "topic": "Weniger Alarme, mehr Signal",
+          "description": "Was maschinelles Lernen im SOC heute wirklich einspart — und was nicht.",
+          "date": "2027-05-11T14:00:00.000Z",
+          "dateEnd": "2027-05-11T15:00:00.000Z",
+          "timeText": "",
+          "stage": "Stage C",
+          "type": ["Talk"],
+          "category": ["KI"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-anna",
+              "name": "Dr. Anna Schmidt",
+              "image": "/img/speakers/anna.jpg",
+              "company": "TU München",
+              "position": "Professorin",
+              "link": "https://example.com/anna"
             }
           ]
         }
@@ -73,6 +130,121 @@
               "company": "Fraunhofer SIT",
               "position": "Quantum Security Lead",
               "link": "https://example.com/leila"
+            }
+          ]
+        },
+        {
+          "id": "ag-inventur",
+          "topic": "Krypto-Inventur: Wo steckt sie überhaupt?",
+          "description": "Der unspektakuläre Teil der Quantenmigration, an dem trotzdem alles hängt.",
+          "date": "2027-05-12T11:30:00.000Z",
+          "dateEnd": "2027-05-12T12:30:00.000Z",
+          "timeText": "",
+          "stage": "Stage B",
+          "type": ["Workshop"],
+          "category": ["Quantum"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-leila",
+              "name": "Leila Hassan",
+              "image": "/img/speakers/leila.jpg",
+              "company": "Fraunhofer SIT",
+              "position": "Quantum Security Lead",
+              "link": "https://example.com/leila"
+            }
+          ]
+        },
+        {
+          "id": "ag-legacy",
+          "topic": "Altsysteme, die kein modernes Login sprechen",
+          "description": "Segmentierung als Zwischenschritt, wenn Authentifizierung keine Option ist.",
+          "date": "2027-05-12T14:00:00.000Z",
+          "dateEnd": "2027-05-12T15:00:00.000Z",
+          "timeText": "",
+          "stage": "Stage B",
+          "type": ["Talk"],
+          "category": ["Architecture"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-max",
+              "name": "Max Müller",
+              "image": "/img/speakers/max.jpg",
+              "company": "Allianz SE",
+              "position": "CISO",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tag 3 — 13. Mai",
+      "tabDate": "2027-05-13",
+      "entries": [
+        {
+          "id": "ag-redteam",
+          "topic": "Wenn der Angreifer dieselbe KI benutzt",
+          "description": "Angriffe auf die Erkennung selbst — und was dagegen tatsächlich hilft.",
+          "date": "2027-05-13T09:30:00.000Z",
+          "dateEnd": "2027-05-13T10:30:00.000Z",
+          "timeText": "",
+          "stage": "Stage C",
+          "type": ["Talk"],
+          "category": ["KI"],
+          "headerImg": "",
+          "speakers": []
+        },
+        {
+          "id": "ag-nis2",
+          "topic": "NIS2 im Mittelstand: die ersten 90 Tage",
+          "description": "Was die Regulierung konkret verlangt und womit man anfängt.",
+          "date": "2027-05-13T11:00:00.000Z",
+          "dateEnd": "2027-05-13T12:00:00.000Z",
+          "timeText": "",
+          "stage": "Main Stage",
+          "type": ["Workshop"],
+          "category": ["Leadership"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-jonas",
+              "name": "Jonas Becker",
+              "image": "/img/speakers/jonas.jpg",
+              "company": "PwC",
+              "position": "Partner, Cyber & Compliance",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "id": "ag-closing",
+          "topic": "Abschluss-Panel: Was wir 2028 anders machen",
+          "description": "Alle Stream-Leads auf einer Bühne.",
+          "date": "2027-05-13T16:00:00.000Z",
+          "dateEnd": "2027-05-13T17:00:00.000Z",
+          "timeText": "",
+          "stage": "Main Stage",
+          "type": ["Panel"],
+          "category": ["Leadership"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-anna",
+              "name": "Dr. Anna Schmidt",
+              "image": "/img/speakers/anna.jpg",
+              "company": "TU München",
+              "position": "Professorin",
+              "link": "https://example.com/anna"
+            },
+            {
+              "speakerId": "spk-max",
+              "name": "Max Müller",
+              "image": "/img/speakers/max.jpg",
+              "company": "Allianz SE",
+              "position": "CISO",
+              "link": ""
             }
           ]
         }

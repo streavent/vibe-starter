@@ -14,6 +14,7 @@
           >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
         >
         <nav class="main-nav">
+          <a href="/streams">Streams</a>
           <a href="/programm">Programm</a>
           <a href="/speakers">Speaker</a>
           <a href="/sponsoren">Sponsoren &amp; Partner</a>
@@ -69,6 +70,18 @@
           <!-- Venue über <sv-event> -->
           <div>
             <h3>Veranstaltungsort</h3>
+            <!--
+              Editierbares Einzelbild: der Kunde tauscht es im CMS, `default` ist das Bild
+              aus dem Bundle, bis er das tut. Für nicht-editierbare Design-Assets bleibt es
+              beim normalen <img>.
+            -->
+            <sv-image
+              class="lead-img"
+              field="contact.venueImage"
+              default="/img/venue.jpg"
+              alt="Allianz Arena von außen"
+              sizes="(max-width: 860px) 100vw, 520px"
+            ></sv-image>
             <sv-event>
               <p style="font-weight: 600" data-bind="location"></p>
               <p style="color: var(--muted)">

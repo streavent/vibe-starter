@@ -18,6 +18,7 @@
           >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
         >
         <nav class="main-nav">
+          <a href="/streams">Streams</a>
           <a href="/programm">Programm</a>
           <a href="/speakers">Speaker</a>
           <a href="/sponsoren">Sponsoren &amp; Partner</a>
@@ -91,6 +92,40 @@
             </div>
           </div>
         </sv-event>
+      </div>
+    </section>
+
+    <!-- STREAMS: <sv-collection> — eigene Datenobjekte des Kunden -->
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Streams</p>
+          <h2 data-sv-field="streams.heading">Vier rote Fäden</h2>
+          <p data-sv-field="streams.teaser">
+            Jeder Stream zieht sich durch alle drei Tage. Ein Ticket, freie Wahl.
+          </p>
+        </div>
+        <div class="grid grid-4 stream-grid">
+          <sv-collection name="streams" limit="4">
+            <template>
+              <a
+                class="card stream-card"
+                data-bind-attr="href:url, data-accent:color"
+              >
+                <img data-bind="img.src" alt="" data-bind-attr="alt:img.alt" />
+                <h3 data-bind="name"></h3>
+                <p class="claim" data-bind="claim"></p>
+                <span class="more">Zum Stream</span>
+              </a>
+            </template>
+            <template slot="empty">
+              <p>Die Streams werden gerade kuratiert.</p>
+            </template>
+          </sv-collection>
+        </div>
+        <p style="margin-top: 24px">
+          <a href="/streams" class="btn btn-ghost">Alle Streams</a>
+        </p>
       </div>
     </section>
 
@@ -206,6 +241,16 @@
                 <figcaption data-bind="caption"></figcaption>
               </figure>
             </template>
+            <!--
+              Startbilder aus dem Bundle: ohne diesen Slot ist die Galerie leer, bis jemand
+              im CMS hochlädt. src -> image, alt -> alt, data-caption -> caption.
+            -->
+            <template slot="default">
+              <img src="/img/gallery/1.jpg" alt="" data-caption="Main Stage 2026" />
+              <img src="/img/gallery/2.jpg" alt="" data-caption="Networking Lounge" />
+              <img src="/img/gallery/3.jpg" alt="" data-caption="Workshop-Track" />
+              <img src="/img/gallery/4.jpg" alt="" data-caption="Abendveranstaltung" />
+            </template>
             <template slot="empty"><p>Bilder folgen.</p></template>
           </sv-gallery>
         </div>
@@ -318,5 +363,6 @@
         </nav>
       </div>
     </footer>
+    <script src="/js/accent.js"></script>
   </body>
 </html>

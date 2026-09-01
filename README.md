@@ -63,16 +63,19 @@ läuft später im CMS als Publish-Gate.
 ## Aufbau
 
 ```text
-streavent.config.json   # Manifest: Sprachen, dynamische Seiten, SEO
+streavent.config.json   # Manifest: Sprachen, Collections, dynamische Seiten, SEO, Redirects
 src/                     # ← hier baust du deine Seite (reines HTML/CSS/JS)
   index.html             # Landing
+  streams.html           # Übersicht einer eigenen Collection
+  stream.html            # dynamische Detailseite → /streams/<slug>
   programm.html          # Agenda-Übersicht
   session.html           # dynamische Detailseite → /programm/<slug>
-  speakers.html          # Speaker-Übersicht
+  speakers.html          # Speaker-Übersicht (featured + Rest)
   speaker.html           # dynamische Detailseite → /speakers/<slug>
   sponsoren.html         # Sponsoren (nach Kategorie gruppiert)
-  kontakt.html           # Kontaktformular + Venue
-  faq.html               # FAQ (statisches Markup, Texte editierbar)
+  kontakt.html           # Kontaktformular + Venue (editierbares Bild)
+  faq.html               # FAQ als Collection (Kunde legt Fragen selbst an)
+  collections/           # Startdaten der eigenen Collections (JSON)
   css/  js/  img/        # deine Assets
 mock-data/               # Beispiel-Daten für die lokale Vorschau
 demo/embed-demo.html     # Embed-Demo (Custom Element im Browser, ohne Backend)
@@ -83,20 +86,47 @@ demo/embed-demo.html     # Embed-Demo (Custom Element im Browser, ohne Backend)
 
 ## Welche Bausteine das Sample demonstriert
 
-| Baustein                                           | Wo                               |
-| -------------------------------------------------- | -------------------------------- |
-| `data-sv-field` (statisch, editierbar)             | überall (Hero, Headings, Footer) |
-| `<sv-event>` (Einzelobjekt)                        | index, kontakt                   |
-| `<sv-speakers>` + Detailseite                      | index, speakers, speaker         |
-| `<sv-agenda>` + nested `<sv-each>` + Detailseite   | index, programm, session         |
-| `<sv-sponsors>` (flach **und** `group="category"`) | index, sponsoren                 |
-| `<sv-gallery>`                                     | index                            |
-| `<sv-capacity>` + `data-sv-show/hide`              | index                            |
-| `<sv-langswitch>` + i18n (`/de`, `/en`)            | header, alle Seiten              |
-| dynamische Detailseiten (`:slug`)                  | speaker, session                 |
+| Baustein                                                | Wo                               |
+| ------------------------------------------------------- | -------------------------------- |
+| `data-sv-field` (statisch, editierbar)                  | überall (Hero, Headings, Footer) |
+| `<sv-event>` (Einzelobjekt)                             | index, kontakt                   |
+| `<sv-speakers>` + Detailseite                           | index, speakers, speaker         |
+| `<sv-agenda>` + nested `<sv-each>` + Detailseite        | index, programm, session         |
+| `<sv-sponsors>` (flach **und** `group="category"`)      | index, sponsoren                 |
+| `<sv-collection>` + Detailseite (eigene Datenobjekte)   | index, streams, stream           |
+| `<sv-collection>` ohne Detailseite (flache Liste)       | faq                              |
+| `<sv-gallery>` inkl. `<template slot="default">`        | index                            |
+| `<sv-image>` (editierbares Einzelbild)                  | kontakt                          |
+| `<sv-capacity>` + `data-sv-show/hide`                   | index                            |
+| `<sv-langswitch>` + i18n (`/de`, `/en`)                 | header, alle Seiten              |
+| `filter` / `exclude` (ein Ausschnitt derselben Liste)   | speakers, faq, stream            |
+| `filter` aus dem Datensatz der Seite (`data-bind-attr`) | stream                           |
+| `data-bind-attr` für Rohwerte (eigenes Layout/JS)       | programm, streams                |
+| Collection-Feldtypen `image`, `color`, `video`, `group` | streams (+ `/js/lightbox.js`)    |
+| `redirects` (Adressen einer abgelösten Site)            | streavent.config.json            |
+| dynamische Detailseiten (`:slug`)                       | speaker, session, stream         |
 
 > Header/Footer sind in jeder Seite **inline** (keine Include-Magie) — geteilte Layouts managt
-> der Designer mit seinem eigenen Tooling. FAQ/Testimonials/Themen sind statisches Markup.
+> der Designer mit seinem eigenen Tooling. Testimonials und Themen auf der Startseite sind
+> bewusst **statisches Markup** — der Kontrast zu den Collections ist Absicht: statisch, wenn
+> der Designer die Einträge pflegt; Collection, sobald der Kunde welche hinzufügen können soll.
+
+## Eigene Collections im Sample
+
+Zwei Stück, weil sie zwei verschiedene Fälle zeigen:
+
+| Collection | Schema                                                                     | Route            | Zeigt                                                         |
+| ---------- | -------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------- |
+| `streams`  | `text`, `color`, `image`, `video`, `cta`, `text[]`, `group[]`, `section`en | `/streams/:slug` | Eintrag mit eigener Seite, Bild, Farbe, Trailer, Unter-Listen |
+| `faq`      | `text`, `text`, `text`                                                     | —                | flache Liste, die der Kunde einfach erweitert                 |
+
+Die Startdaten liegen in `src/collections/*.json` und wandern mit ins ZIP. Sobald der Kunde im
+CMS Einträge pflegt, **gewinnt sein Stand** — auch eine bewusst geleerte Liste.
+
+Der interessante Teil steht in `src/stream.html`: die Agenda dort filtert sich über
+`data-bind-attr="filter:agendaFilter"` aus dem **Feld des Eintrags**. Legt der Kunde einen
+fünften Stream an, entsteht seine Seite mit dem passenden Programm darauf — ohne dass jemand
+die Vorlage anfasst.
 
 ## Verpacken (Handoff)
 

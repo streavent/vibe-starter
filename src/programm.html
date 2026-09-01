@@ -17,6 +17,7 @@
           >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
         >
         <nav class="main-nav">
+          <a href="/streams">Streams</a>
           <a href="/programm">Programm</a>
           <a href="/speakers">Speaker</a>
           <a href="/sponsoren">Sponsoren &amp; Partner</a>
@@ -52,9 +53,17 @@
         </p>
 
         <h2 style="margin-top: 48px">Tag 1</h2>
+        <!--
+          data-bind-attr legt die ROHWERTE zusätzlich ins DOM. `data-bind` schreibt
+          anzeigefertig ("11:00"), daraus kann eigenes JS keine Position berechnen — eine
+          Timetable braucht den Instant. Beides auf demselben Element ist erlaubt.
+        -->
         <sv-agenda day="1">
           <template>
-            <div class="slot">
+            <div
+              class="slot"
+              data-bind-attr="data-start:date, data-end:dateEnd, data-stage:stage"
+            >
               <time data-bind="date" data-format="time"></time>
               <div>
                 <h4>
@@ -81,6 +90,24 @@
 
         <h2 style="margin-top: 48px">Tag 2</h2>
         <sv-agenda day="2">
+          <template>
+            <div class="slot">
+              <time data-bind="date" data-format="time"></time>
+              <div>
+                <h4>
+                  <a data-bind="url"><span data-bind="topic"></span></a>
+                </h4>
+                <div class="meta">
+                  <span data-bind="stage"></span> ·
+                  <span data-bind="type" data-join=", "></span>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template slot="empty"><p>Programm folgt.</p></template>
+        </sv-agenda>
+        <h2 style="margin-top: 48px">Tag 3</h2>
+        <sv-agenda day="3">
           <template>
             <div class="slot">
               <time data-bind="date" data-format="time"></time>

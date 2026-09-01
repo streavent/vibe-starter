@@ -10,6 +10,6 @@
     "package": "sv package"
   },
   "devDependencies": {
-    "@streavent/sv-runtime": "^1.0.0"
+    "@streavent/sv-runtime": "^1.0.1"
   }
 }

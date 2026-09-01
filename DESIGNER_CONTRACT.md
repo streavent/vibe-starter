@@ -82,20 +82,24 @@ npm start          # lokale Vorschau auf http://localhost:3001
 
 ```text
 my-event-site/
-├── streavent.config.json    # Site-Manifest (Sprachen, dynamische Seiten, SEO-Defaults)
+├── streavent.config.json    # Site-Manifest (Sprachen, Collections, dynamische Seiten, SEO)
 ├── src/                     # ← HIER baust du deine Seite
 │   ├── index.html
 │   ├── about.html
 │   ├── speaker.html         # dynamische Detailseite (1 Template → viele Speaker-Seiten)
+│   ├── collections/         # Startdaten deiner eigenen Collections (JSON, siehe 4.9)
 │   ├── css/
 │   ├── js/
 │   └── img/
 ├── mock-data/               # Beispiel-Speaker/Agenda/Sponsoren für die lokale Vorschau
-├── runtime/                 # Streavent Dev-Runtime (<sv-*> + Dev-Server) — NICHT bearbeiten
-├── docs/                    # dieses Contract-Dokument
+├── DESIGNER_CONTRACT.md     # dieses Dokument
+├── AI_BRIEF.md              # Kurzfassung als KI-Kontext
 └── package.json
 ```
 
+> Die Dev-Runtime (`<sv-*>`, Renderer, Validator, `sv`-CLI, Browser-Bundle) liegt **nicht** im
+> Repo, sondern im npm-Paket `@streavent/sv-runtime` (devDependency). Sie wird nicht bearbeitet.
+>
 > Du arbeitest praktisch nur in **`src/`** und in **`streavent.config.json`**.
 > Was du am Ende ablieferst, ist genau dieser Inhalt als ZIP → siehe [Kapitel 12](#12-publish--go-live).
 
@@ -310,9 +314,10 @@ Die eine maschinenlesbare Datei im Projekt-Root, in der du das deklarierst, was 
 
 > \* Pflicht, sobald ein `dynamicPages`-Eintrag existiert.
 >
-> **Verfügbare Collections** für Detailseiten (was die Runtime auflöst): `speakers`, `agenda`.
-> Weitere folgen — eine erfundene Collection schlägt bei der Validierung fehl. (Sponsoren-
-> Detailseiten sind noch nicht verdrahtet.)
+> **Verfügbare Collections** für Detailseiten: `speakers` und `agenda` aus den Streavent-Daten —
+> plus **jede eigene Collection**, die du unter `collections[]` deklariert hast (siehe 4.9). Ein
+> Name, den es weder als Streavent-Collection noch in deiner Deklaration gibt, schlägt bei der
+> Validierung fehl. (Sponsoren-Detailseiten sind noch nicht verdrahtet.)
 
 #### Alte Adressen mitnehmen: `redirects`
 
@@ -369,9 +374,10 @@ src/
 ├── about.html              →  /about
 ├── agenda.html             →  /agenda
 ├── speaker.html            →  Vorlage → /speakers/<slug>   (via streavent.config.json)
+├── collections/*.json      →  Startdaten deiner Collections (keine URL, siehe 4.9)
 ├── css/  js/  img/         →  deine Assets (in Unterordnern)
 └── favicon.ico             →  ok im Root
-streavent.config.json       →  Manifest (Sprachen, dynamische Seiten, SEO)
+streavent.config.json       →  Manifest (Sprachen, Collections, dynamische Seiten, SEO)
 ```
 
 ## 4. Statische Inhalte & Inline-Editing
@@ -680,7 +686,8 @@ Linkfeld. Deklariere `video` überall dort, wo heute ein Pfad in einem `text`-Fe
 
 > **Deine Wiedergabe muss beide Fälle können.** Eine eigene Lightbox, die den Wert in ein
 > `<video src>` steckt, zeigt bei einem YouTube-Link nichts. Prüfe den Wert und baue im
-> Zweifel ein `<iframe>` — die Starter-Lightbox macht genau das vor.
+> Zweifel ein `<iframe>` — `src/js/lightbox.js` im Sample-Repo macht genau das vor (die
+> Stream-Detailseite benutzt es).
 
 ##### `section` — Überschriften im Eingabeformular
 
@@ -712,7 +719,7 @@ Die in `defaults` genannte Datei ist ein Array von Einträgen:
     "name": "Regulatorik & Compliance",
     "claim": "…",
     "color": "#FF6A36",
-    "img": { "src": "/assets/img/stream-reg.jpg", "alt": "…" },
+    "img": { "src": "/img/streams/regulatorik.jpg", "alt": "…" },
     "takeaways": ["…", "…"],
     "cases": [{ "who": "…", "quote": "…" }]
   }
@@ -721,6 +728,12 @@ Die in `defaults` genannte Datei ist ein Array von Einträgen:
 
 Gleiche Regel wie bei `<sv-gallery>`: **eine gespeicherte Liste gewinnt** — auch eine bewusst
 geleerte. Ohne Startdaten steht der Kunde beim ersten Öffnen vor einer leeren Seite.
+
+> **Die Startdaten sind sprachneutral, die gepflegten Einträge nicht.** Die `defaults`-Datei
+> gibt es einmal und sie füllt jede Sprache. Sobald der Kunde Einträge pflegt, liegen sie
+> **pro Sprache** im Content-Store: Was er in `/de` anlegt, erscheint nicht in `/en`. Auf einer
+> zweisprachigen Site heißt das, jede Collection wird zweimal gepflegt — plane das ein, statt
+> es beim ersten Sprachwechsel zu entdecken.
 
 #### Schritt 3 — Im Markup
 
@@ -1644,8 +1657,8 @@ So bist du auf die spätere Härtung vorbereitet, ohne heute eingeschränkt zu s
 
 ### 11.1 Lokaler Start
 
-Das Sample-Repo bringt eine lokale Runtime mit, die genau das tut, was die Live-Seite tut — nur
-mit Mock-Daten.
+Das Sample-Repo zieht die Dev-Runtime als npm-Paket (`@streavent/sv-runtime`) — dieselbe, die
+beim Publish läuft. Lokal tut sie genau das, was die Live-Seite tut, nur mit Mock-Daten.
 
 ```bash
 npm install
@@ -1662,7 +1675,7 @@ Der Dev-Server:
   Report beim Start (unbekannte `<sv-*>`, falsche Felder, fehlende `<template>`/Pflicht-Attribute,
   reservierte Routen, Config-Fehler).
 
-### 11.4 Contract-Check (vor der Abgabe)
+### 11.2 Contract-Check (vor der Abgabe)
 
 ```bash
 npm run validate   # einmaliger Check, Exit-Code 1 bei Fehlern
@@ -1671,13 +1684,17 @@ npm run validate   # einmaliger Check, Exit-Code 1 bei Fehlern
 Speist sich aus demselben Komponenten-Katalog wie die Runtime — deckt also genau das ab, was beim
 Publish ebenfalls geprüft wird. **Muss grün sein, bevor du die ZIP abgibst.**
 
-### 11.2 Mock-Daten
+### 11.3 Mock-Daten
 
 In `mock-data/` liegen Beispiel-Datensätze (Speaker, Agenda, Sponsoren, Event). Du darfst sie
 erweitern, um dein Layout mit realistischen Mengen zu testen (viele Speaker, lange Titel, fehlende
 optionale Felder). Die Feldnamen entsprechen exakt [Kap. 5](#5-dynamische-daten--die-sv-komponenten).
 
-### 11.3 Grenzen der lokalen Vorschau
+> **Deine eigenen Collections stehen nicht hier.** Ihre Startdaten gehören ins Bundle
+> (`src/collections/*.json`, siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)) —
+> `mock-data/` ist reine Vorschau und wird nicht mit abgegeben.
+
+### 11.4 Grenzen der lokalen Vorschau
 
 - Du arbeitest gegen **Mock-Daten**, nicht gegen ein echtes Event. Echte Daten erscheinen erst nach
   dem Anbinden an ein Event (Publish).
@@ -1704,8 +1721,9 @@ src/…                     # deine Seiten + Assets
 streavent.config.json     # das Manifest
 ```
 
-**Nicht** enthalten: `runtime/`, `mock-data/`, `node_modules/`, `docs/` — die braucht Streavent
-nicht.
+**Nicht** enthalten: `mock-data/`, `node_modules/`, die Doku — die braucht Streavent nicht.
+Die Startdaten deiner Collections liegen bewusst unter `src/collections/` und sind deshalb
+**drin**: ohne sie steht der Kunde beim ersten Öffnen vor leeren Listen.
 
 ### 12.2 Hochladen im CMS
 
@@ -1786,12 +1804,14 @@ Die harten Regeln auf einer Seite.
 | `<template slot="empty">`               | Leerzustand (Pflicht)                                                                  |
 | `limit` · `sort` (`-feld` = absteigend) | Anzahl / Sortierung                                                                    |
 | `filter="feld:wert"`                    | Nur Einträge, deren Feld passt (Groß-/Kleinschreibung egal)                            |
+| `exclude="feld:wert"`                   | Passende Einträge weglassen (läuft **nach** `filter`)                                  |
+| `<template slot="default">`             | Nur `<sv-gallery>`: Startbilder aus dem Bundle                                         |
 
 ### Komponenten
 
 | Komponente                 | Liefert               | Wichtige Felder                                                                                                                                                            |
 | -------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`                                                                                      |
+| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`, `featured`, `category`                                                              |
 | `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`, `highlight`, `stageColor`, `typeColor`, `categoryColor` |
 | `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                                             |
 | `<sv-sponsors>`            | Liste                 | `name`, `logoUrl`, `bannerUrl`, `description`, `website`, `websiteLabel`, `documents[]`                                                                                    |
@@ -1801,6 +1821,7 @@ Die harten Regeln auf einer Seite.
 | `<sv-gallery field>`       | editierbare Galerie   | Item: `image`, `alt`, `caption`                                                                                                                                            |
 | `<sv-capacity>`            | Status (Einzelobjekt) | `atCapacity`, `waitlistEnabled`                                                                                                                                            |
 | `<sv-langswitch>`          | Sprachlinks           | `code`, `label`, `url`, `isCurrent`                                                                                                                                        |
+| `<sv-collection name>`     | Liste (eigene Daten)  | die im Manifest deklarierten Felder + `slug`, `url` — siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)                                                     |
 
 ### Reservierte Routen (nur verlinken, keine eigenen Seiten)
 
@@ -1816,8 +1837,24 @@ app   login     booth     zoom    invoice  registration  check
   "name": "Mein Event",
   "languages": ["de", "en"],
   "defaultLanguage": "de",
-  "dynamicPages": [{ "template": "speaker.html", "collection": "speakers", "route": "/speakers/:slug", "slugFrom": "name" }],
-  "seo": { "defaultOgImage": "/img/og-default.jpg", "titleSuffix": " · Mein Event" }
+  "collections": [
+    {
+      "name": "streams",
+      "label": "Streams",
+      "itemLabel": "name",
+      "defaults": "collections/streams.json",
+      "fields": [
+        { "key": "name", "type": "text", "required": true },
+        { "key": "color", "type": "color" }
+      ]
+    }
+  ],
+  "dynamicPages": [
+    { "template": "speaker.html", "collection": "speakers", "route": "/speakers/:slug", "slugFrom": "name" },
+    { "template": "stream.html", "collection": "streams", "route": "/streams/:slug", "slugFrom": "name" }
+  ],
+  "seo": { "defaultOgImage": "/img/og-default.jpg", "titleSuffix": " · Mein Event" },
+  "redirects": { "/tickets.html": "/teilnehmen" }
 }
 ```
 

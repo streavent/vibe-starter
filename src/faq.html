@@ -14,6 +14,7 @@
           >Cyber<strong>Summit</strong> <span class="brand-year">2027</span></a
         >
         <nav class="main-nav">
+          <a href="/streams">Streams</a>
           <a href="/programm">Programm</a>
           <a href="/speakers">Speaker</a>
           <a href="/sponsoren">Sponsoren &amp; Partner</a>
@@ -41,30 +42,44 @@
         <p class="eyebrow">FAQ</p>
         <h1 data-sv-field="faq.title">Häufige Fragen</h1>
 
-        <!-- Statisches Markup: der Designer pflegt die FAQ-Einträge selbst; Texte sind editierbar -->
+        <!--
+          Eine eigene Collection: der Kunde legt Fragen selbst an, löscht sie und sortiert
+          sie um — ohne dass jemand diese Seite anfasst. Das Schema steht in
+          streavent.config.json, die Startdaten in src/collections/faq.json.
+        -->
         <div style="margin-top: 24px">
-          <div class="faq-item">
-            <h3 data-sv-field="faq.1.q">
-              Wann und wo findet der CyberSummit 2027 statt?
-            </h3>
-            <p data-sv-field="faq.1.a">
-              Vom 11.–13. Mai 2027 in der Allianz Arena in München.
-            </p>
-          </div>
-          <div class="faq-item">
-            <h3 data-sv-field="faq.2.q">Gibt es noch Tickets?</h3>
-            <p data-sv-field="faq.2.a">
-              Die regulären Tickets sind vergeben. Trag dich in die Warteliste
-              2027 ein.
-            </p>
-          </div>
-          <div class="faq-item">
-            <h3 data-sv-field="faq.3.q">Werden die Sessions aufgezeichnet?</h3>
-            <p data-sv-field="faq.3.a">
-              Ausgewählte Keynotes werden aufgezeichnet und Teilnehmenden im
-              Nachgang bereitgestellt.
-            </p>
-          </div>
+          <sv-collection name="faq">
+            <template>
+              <div class="faq-item">
+                <h3 data-bind="question"></h3>
+                <p data-bind="answer"></p>
+              </div>
+            </template>
+            <template slot="empty">
+              <p>Fragen? Schreib uns über das <a href="/kontakt">Kontaktformular</a>.</p>
+            </template>
+          </sv-collection>
+        </div>
+
+        <h2 style="margin-top: 56px">Nur zu Tickets</h2>
+        <p style="color: var(--muted)">
+          Die häufigsten Fragen rund um Buchung und Umschreibung.
+        </p>
+        <!--
+          Derselbe Datenbestand, ein Ausschnitt daraus: `filter="topic:Tickets"` zeigt nur
+          die Einträge, deren Feld `topic` passt. Groß-/Kleinschreibung und Leerzeichen
+          sind egal — die Werte tippt der Veranstalter im CMS.
+        -->
+        <div>
+          <sv-collection name="faq" filter="topic:Tickets">
+            <template>
+              <div class="faq-item">
+                <h3 data-bind="question"></h3>
+                <p data-bind="answer"></p>
+              </div>
+            </template>
+            <template slot="empty"><p>Keine Ticket-Fragen erfasst.</p></template>
+          </sv-collection>
         </div>
       </div>
     </section>

@@ -444,6 +444,112 @@ section {
   color: var(--text);
 }
 
+/* Streams (Collection) — die Akzentfarbe kommt aus den Daten, siehe /js/accent.js */
+.stream-card {
+  display: block;
+  border-top: 3px solid var(--accent-stream, var(--accent));
+  color: inherit;
+  padding: 0 0 20px;
+  overflow: hidden;
+}
+.stream-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.stream-card h3,
+.stream-card .claim,
+.stream-card .more {
+  padding: 0 20px;
+}
+.stream-card h3 {
+  margin: 16px 0 6px;
+  font-size: 1.1rem;
+}
+.stream-card .claim {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.stream-card .more {
+  display: inline-block;
+  color: var(--accent-stream, var(--accent));
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.stream-card:hover {
+  border-color: var(--accent-stream, var(--accent));
+}
+
+.stream-detail h1,
+.stream-detail h2 {
+  border-left: 4px solid var(--accent-stream, var(--accent));
+  padding-left: 14px;
+}
+.stream-detail .claim {
+  color: var(--accent-stream, var(--accent));
+  font-weight: 600;
+}
+.stream-detail h2 {
+  margin-top: 44px;
+  font-size: 1.35rem;
+}
+.quote-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.takeaways {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+/* Hervorgehobene Speaker bekommen mehr Fläche, kein anderes Layout */
+.speaker-card.featured img {
+  width: 128px;
+  height: 128px;
+  border-color: var(--accent-2);
+}
+
+/* Video-Lightbox (/js/lightbox.js) — spielt Datei UND Portal-Link */
+.lightbox {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: min(960px, 92vw);
+  color: var(--text);
+}
+.lightbox::backdrop {
+  background: rgba(5, 8, 18, 0.82);
+}
+.lightbox-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.lightbox-stage video,
+.lightbox-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+/* Im Fluss über der Bühne statt absolut: ein modales <dialog> liegt im Top-Layer,
+   und dessen Positionierung ist nichts, wogegen man zuverlässig `top: -38px` rechnet. */
+.lightbox-close {
+  display: block;
+  margin: 0 0 6px auto;
+  padding: 0 4px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 @media (max-width: 860px) {
   .main-nav {
     display: none;
@@ -456,5 +562,9 @@ section {
   }
   .slot {
     grid-template-columns: 1fr;
+  }
+  .stream-detail h1,
+  .stream-detail h2 {
+    padding-left: 10px;
   }
 }

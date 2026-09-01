@@ -29,8 +29,16 @@ Streavent an. Du baust **kein** CMS und **keine** Build-Pipeline — nur die Sei
 ### `streavent.config.json` (Pflichtfelder)
 
 `name` (string), `languages` (nicht-leeres Array), `defaultLanguage` (∈ `languages`).
-Optional `dynamicPages[]` (`template`, `collection` ∈ {`speakers`, `agenda`}, `route` mit `:slug`,
-`slugFrom`) und `seo` (`defaultOgImage`, `titleSuffix`).
+Optional:
+
+- `collections[]` — eigene Datenobjekte des Kunden (s. u.)
+- `dynamicPages[]` — `template`, `collection` (`speakers`, `agenda` **oder ein eigener
+  Collection-Name**), `route` mit `:slug`, `slugFrom`
+- `seo` — `defaultOgImage`, `titleSuffix`
+- `redirects` — `{ "/alt.html": "/neu" }`, nur wenn die Site eine bestehende ABLÖST. Der
+  Normalfall (`.html` fällt weg) passiert von selbst; hier stehen nur echte Umbenennungen.
+  Beides root-absolut. Schleifen, Ziele auf App-Routen und Quellen, die die Site selbst
+  ausliefert, lehnt der Validator ab.
 
 ### Reservierte Top-Level-Routen (NICHT als Seitenname verwenden)
 
@@ -48,21 +56,27 @@ als Default; der Kunde überschreibt ihn inline. Schlüssel feature-namespacen (
 Alle Listen-Komponenten sind **renderless**: du lieferst ein `<template>` mit `data-bind`-Stellen,
 die Komponente wiederholt es pro Datensatz. Optional `<template slot="empty">`. In verschachtelte
 Arrays gehst du mit `<sv-each field="…">`. Hilfs-Attribute: `data-format="date|time|datetime"`,
-`data-join=", "`, `data-sv-show/hide="feld"`, `limit`, `sort`.
+`data-join=", "`, `data-sv-show/hide="feld"`, `limit`, `sort`, `filter="feld:wert"`,
+`exclude="feld:wert"` (Reihenfolge: filtern → sortieren → begrenzen; Groß-/Kleinschreibung und
+Leerzeichen egal). Rohwerte fürs eigene Layout: `data-bind-attr="attribut:feld, …"` — schreibt
+UNFORMATIERT in beliebige Attribute (`style` und `on*` gesperrt). Auf einem Komponenten-HOST
+einer Detailseite bindet `data-bind-attr` gegen den Datensatz der Seite:
+`<sv-agenda data-bind-attr="filter:agendaFilter">`.
 
 **Katalog (Felder → siehe `dist/COMPONENT_CATALOG.md` für Details):**
 
-| Tag                      | Art          | Wichtigste Felder                                                                                     |
-| ------------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
-| `<sv-event>`             | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                               |
-| `<sv-capacity>`          | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                 |
-| `<sv-speakers>`          | Liste        | name, bio, image, company, position, website, linkedIn, twitter                                       |
-| `<sv-agenda>`            | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName                |
-| `<sv-sponsors>`          | Liste        | name, logoUrl, bannerUrl, description, website, documents (`group="category"`: name, color, sponsors) |
-| `<sv-events>`            | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                            |
-| `<sv-gallery field="…">` | Liste        | image, alt, caption (kundeneditierbar)                                                                |
-| `<sv-langswitch>`        | Liste        | code, label, url, isCurrent                                                                           |
-| `<sv-image field="…">`   | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                              |
+| Tag                        | Art          | Wichtigste Felder                                                                                     |
+| -------------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
+| `<sv-event>`               | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                               |
+| `<sv-capacity>`            | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                 |
+| `<sv-speakers>`            | Liste        | name, bio, image, company, position, website, linkedIn, twitter, featured, category                   |
+| `<sv-agenda>`              | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName                |
+| `<sv-sponsors>`            | Liste        | name, logoUrl, bannerUrl, description, website, documents (`group="category"`: name, color, sponsors) |
+| `<sv-events>`              | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                            |
+| `<sv-gallery field="…">`   | Liste        | image, alt, caption (kundeneditierbar; Bundle-Defaults via `<template slot="default">`)               |
+| `<sv-collection name="…">` | Liste        | die im Manifest deklarierten Felder dieser Collection (+ `slug`, `url`)                               |
+| `<sv-langswitch>`          | Liste        | code, label, url, isCurrent                                                                           |
+| `<sv-image field="…">`     | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                              |
 
 Auf Detailseiten (`dynamicPages`) bindest du die Felder der Collection **direkt** (kein `<sv-*>`-Wrapper).
 Zusätzlich verfügbar auf detail-verlinkbaren Einträgen: `url`, `slug`.
@@ -94,6 +108,48 @@ Listen-Komponenten binden **jedes Feld** in jeden Eintrag — für ein Popup bra
 Trade-off: Popup = schneller Blick, aber keine teilbare URL / kein SEO/OG. Routed Subpage
 (`dynamicPages`) = eigene, teilbare URL mit SSR/OG. Schnellansicht → Popup; verlinkbare Seite → Subpage.
 
+## Eigene Collections: `<sv-collection>`
+
+Wenn der Kunde eine Liste gleich geformter Datensätze selbst pflegen soll (Streams, Zielgruppen,
+FAQ), deklarierst DU das Schema, ER pflegt die Einträge — hinzufügen, löschen, sortieren,
+bearbeiten, aber nie die Felder ändern.
+
+```jsonc
+// streavent.config.json
+"collections": [{
+  "name": "streams", "label": "Streams", "itemLabel": "name",
+  "defaults": "collections/streams.json",     // Startdaten, relativ zu src/
+  "fields": [
+    { "key": "name",  "type": "text", "required": true, "section": "Kopfbereich" },
+    { "key": "color", "type": "color" },
+    { "key": "img",   "type": "image" },
+    { "key": "takeaways", "type": "text", "repeat": true },
+    { "key": "cases", "type": "group", "repeat": true,
+      "fields": [{ "key": "who", "type": "text" }, { "key": "quote", "type": "text" }] }
+  ]
+}]
+```
+
+Feldtypen: `text`, `richtext`, `link` (`{label,href}`), `cta` (`{label,href}`), `image`
+(`{src,alt}`), `video` (String: Datei-Pfad ODER YouTube-/Vimeo-Link), `color` (`#rrggbb`),
+`group` (**genau eine** Verschachtelungsebene). `"repeat": true` macht aus jedem Typ eine Liste.
+`section` gruppiert nur das CMS-Formular (nur oberste Ebene). `slug`/`url` sind reserviert und
+werden beim Rendern gesetzt.
+
+Im Markup dieselbe Mechanik wie `<sv-speakers>`; wiederholte Felder innerhalb eines Eintrags mit
+`<sv-each field="…">` — bei einer Liste einfacher Texte ist `data-bind="."` der Wert selbst, bei
+`image`/`link`/`cta` bindest du die Wert-Keys (`src`, `href`, …).
+
+Ein `dynamicPages`-Eintrag auf diese Collection gibt **jedem Eintrag eine eigene URL**; der Kunde
+legt einen Datensatz an und die Seite entsteht beim nächsten Rendern.
+
+Zwei Regeln, die man sonst erst beim Publish merkt:
+
+- **Eine gespeicherte Liste gewinnt** — auch eine bewusst geleerte. Nur ihr Fehlen fällt auf die
+  `defaults` zurück. Gleiches gilt für `<sv-gallery>`.
+- **Ein Bundle-Update, das ein Feld entfernt, wird abgelehnt**, sobald Einträge dafür Inhalt
+  tragen. Erst im CMS leeren, dann hochladen.
+
 ## Harte Regeln
 
 - **Erfinde keine Tags/Felder.** Nur die oben gelisteten existieren — alles andere meldet der Validator.
@@ -109,5 +165,7 @@ npm run validate     # Contract-Check; muss grün sein vor Abgabe (Exit 1 bei Fe
 npm run package      # erzeugt my-event-site.zip (src/ + streavent.config.json)
 ```
 
-Die ZIP enthält **genau** `src/` + `streavent.config.json` — kein `runtime/`, `node_modules/`, `dist/`.
+Die ZIP enthält **genau** `src/` + `streavent.config.json` — kein `mock-data/`, `node_modules/`,
+keine Runtime. Die Startdaten deiner Collections liegen deshalb unter `src/collections/` und
+wandern mit; `mock-data/` ist reine Vorschau und bleibt draußen.
 Update = neue ZIP. Vor jeder Abgabe `npm run validate` ohne Fehler.

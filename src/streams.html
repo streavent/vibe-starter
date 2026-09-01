@@ -3,10 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Detailseite: Meta an den Datensatz gebunden -->
-    <title data-bind="topic"></title>
-    <meta name="description" data-bind="description" />
-    <meta property="og:image" data-bind="headerImg" />
+    <title>Streams</title>
+    <meta
+      name="description"
+      data-sv-field="streams.metaDescription"
+      content="Vier Streams, ein Ticket — das inhaltliche Rückgrat des CyberSummit 2027."
+    />
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
@@ -41,31 +43,41 @@
 
     <section class="detail">
       <div class="container">
-        <a href="/programm" class="back">← Zurück zum Programm</a>
-        <h1 data-bind="topic"></h1>
-        <p class="meta" style="color: var(--accent-2)">
-          <span data-bind="date" data-format="datetime"></span> ·
-          <span data-bind="stage"></span>
+        <p class="eyebrow">Streams</p>
+        <h1 data-sv-field="streams.pageTitle">Vier Streams, ein Ticket</h1>
+        <p
+          class="lead"
+          style="color: var(--muted); max-width: 640px"
+          data-sv-field="streams.intro"
+        >
+          Jeder Stream ist ein eigener roter Faden durch die drei Tage. Du musst
+          dich nicht festlegen — wechseln ist ausdrücklich erwünscht.
         </p>
-        <img class="lead-img" data-bind="headerImg" alt="" />
-        <p data-bind="description"></p>
 
-        <h3 style="margin-top: 32px">Speaker</h3>
-        <div class="grid grid-4">
-          <sv-each field="speakers">
+        <!--
+          <sv-collection> ist dieselbe Mechanik wie <sv-speakers>: renderless, ein
+          <template> pro Eintrag. Der Unterschied ist die Datenquelle — hier sind es
+          Einträge, die der Kunde selbst anlegen und löschen darf (Schema in
+          streavent.config.json → collections).
+        -->
+        <div class="grid grid-4 stream-grid">
+          <sv-collection name="streams">
             <template>
-              <div class="card speaker-card">
-                <img data-bind="image" alt="" />
+              <a
+                class="card stream-card"
+                data-bind-attr="href:url, data-accent:color"
+              >
+                <img data-bind="img.src" alt="" data-bind-attr="alt:img.alt" />
                 <h3 data-bind="name"></h3>
-                <div class="org" data-bind="company"></div>
-              </div>
+                <p class="claim" data-bind="claim"></p>
+                <span class="more">Zum Stream</span>
+              </a>
             </template>
-          </sv-each>
+            <template slot="empty">
+              <p>Die Streams werden gerade kuratiert.</p>
+            </template>
+          </sv-collection>
         </div>
-
-        <p style="margin-top: 32px">
-          <a href="/shop" class="btn btn-primary">Ticket sichern</a>
-        </p>
       </div>
     </section>
 
@@ -86,5 +98,6 @@
         </nav>
       </div>
     </footer>
+    <script src="/js/accent.js"></script>
   </body>
 </html>

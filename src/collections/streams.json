@@ -1,0 +1,121 @@
+[
+  {
+    "name": "Leadership & Governance",
+    "claim": "Sicherheit ist eine Vorstandsfrage — keine Werkzeugfrage.",
+    "color": "#2F6BFF",
+    "img": {
+      "src": "/img/streams/leadership.jpg",
+      "alt": "Panel auf der Main Stage"
+    },
+    "intro": "Wer ein Sicherheitsbudget verteidigen muss, braucht keine Feature-Liste, sondern eine Sprache, die im Vorstand trägt. Dieser Stream übersetzt Risiko in Entscheidungen — von der Meldepflicht bis zur Frage, wer im Ernstfall unterschreibt.",
+    "takeaways": [
+      "Ein Risikobericht, der ohne Übersetzung ins Board-Meeting passt",
+      "Klare Eskalationswege für die ersten 24 Stunden eines Vorfalls",
+      "Argumente für Budget, die nicht auf Angst gebaut sind"
+    ],
+    "cases": [
+      {
+        "who": "Sandra Vogt",
+        "role": "CISO, Handelskonzern",
+        "quote": "Ich bin mit einer Folie rausgegangen, die unser Vorstand ohne Rückfrage verstanden hat. Das war das erste Mal."
+      }
+    ],
+    "trailer": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+    "agendaFilter": "category:Leadership",
+    "cta": {
+      "label": "Leadership-Track buchen",
+      "href": "/shop"
+    },
+    "seoTitle": "Leadership & Governance — Security als Vorstandsthema"
+  },
+  {
+    "name": "Architektur & Zero Trust",
+    "claim": "Zero Trust ist kein Produkt. Es ist eine Reihenfolge.",
+    "color": "#10B981",
+    "img": {
+      "src": "/img/streams/architecture.jpg",
+      "alt": "Whiteboard mit Netzwerkarchitektur"
+    },
+    "intro": "Jede gewachsene Konzern-IT hat die eine Verbindung, die niemand anfassen will. Dieser Stream zeigt, in welcher Reihenfolge man Zero Trust ausrollt, ohne den Betrieb anzuhalten — und woran die meisten Projekte im zweiten Jahr scheitern.",
+    "takeaways": [
+      "Eine Migrationsreihenfolge, die mit dem risikoärmsten Segment beginnt",
+      "Messpunkte, an denen man merkt, dass der Rollout stockt",
+      "Umgang mit Altsystemen, die keine moderne Authentifizierung sprechen"
+    ],
+    "cases": [
+      {
+        "who": "Max Müller",
+        "role": "CISO, Allianz SE",
+        "quote": "Wir hatten drei Jahre lang die falsche Reihenfolge. Der Workshop hat das in zwei Stunden auseinandergenommen."
+      },
+      {
+        "who": "Jonas Weber",
+        "role": "Head of Platform, Northgate",
+        "quote": "Endlich mal ohne Folien vom Hersteller."
+      }
+    ],
+    "agendaFilter": "category:Architecture",
+    "cta": {
+      "label": "Architektur-Track buchen",
+      "href": "/shop"
+    },
+    "seoTitle": "Architektur & Zero Trust — Migration ohne Betriebsstillstand"
+  },
+  {
+    "name": "KI & Cyberabwehr",
+    "claim": "Angreifer automatisieren längst. Die Verteidigung zieht nach.",
+    "color": "#FF6A36",
+    "img": {
+      "src": "/img/streams/ki.jpg",
+      "alt": "Security Operations Center"
+    },
+    "intro": "Zwischen „KI erkennt alles“ und „KI ist nur Statistik“ liegt die Praxis: Modelle, die im SOC tatsächlich Alarme reduzieren — und die Frage, was passiert, wenn der Angreifer dasselbe Werkzeug benutzt.",
+    "takeaways": [
+      "Wo maschinelles Lernen im SOC heute wirklich Zeit spart",
+      "Wie man ein Modell bewertet, das man nicht selbst trainiert hat",
+      "Angriffe auf die Erkennung selbst — und was dagegen hilft"
+    ],
+    "cases": [
+      {
+        "who": "Dr. Anna Schmidt",
+        "role": "Professorin, TU München",
+        "quote": "Die spannendste Frage ist nicht, ob das Modell den Angriff sieht — sondern was es übersieht, seit es trainiert wurde."
+      }
+    ],
+    "trailer": "/video/ki-stream-trailer.mp4",
+    "agendaFilter": "category:KI",
+    "cta": {
+      "label": "KI-Track buchen",
+      "href": "/shop"
+    },
+    "seoTitle": "KI & Cyberabwehr — was im SOC wirklich funktioniert"
+  },
+  {
+    "name": "Post-Quanten-Kryptografie",
+    "claim": "Was heute abgehört wird, wird später entschlüsselt.",
+    "color": "#8B5CF6",
+    "img": {
+      "src": "/img/streams/quantum.jpg",
+      "alt": "Detail eines Quantencomputers"
+    },
+    "intro": "„Harvest now, decrypt later“ ist kein Gedankenspiel, sondern ein Bedrohungsmodell mit Datum. Dieser Stream geht die Migration zu quantensicheren Verfahren durch — Inventur, Reihenfolge, Fallstricke.",
+    "takeaways": [
+      "Eine Inventur, die zeigt, wo überhaupt Kryptografie steckt",
+      "Kriterien, welche Systeme zuerst migriert werden müssen",
+      "Was Hybrid-Verfahren in der Übergangszeit leisten"
+    ],
+    "cases": [
+      {
+        "who": "Leila Hassan",
+        "role": "Quantum Security Lead, Fraunhofer SIT",
+        "quote": "Die Inventur ist die eigentliche Arbeit. Der Algorithmenwechsel danach ist fast langweilig."
+      }
+    ],
+    "agendaFilter": "category:Quantum",
+    "cta": {
+      "label": "Quantum-Track buchen",
+      "href": "/shop"
+    },
+    "seoTitle": "Post-Quanten-Kryptografie — Migration mit Reihenfolge"
+  }
+]
