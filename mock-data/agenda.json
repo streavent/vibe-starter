@@ -1,8 +1,9 @@
 {
   "tabs": [
     {
+      "_id": "tab-tag-1",
       "name": "Tag 1 — 11. Mai",
-      "tabDate": "2027-05-11",
+      "tabDate": "2027-05-10T22:00:00.000Z",
       "entries": [
         {
           "id": "ag-keynote",
@@ -108,8 +109,9 @@
       ]
     },
     {
+      "_id": "tab-tag-2",
       "name": "Tag 2 — 12. Mai",
-      "tabDate": "2027-05-12",
+      "tabDate": "2027-05-11T22:00:00.000Z",
       "entries": [
         {
           "id": "ag-quantum",
@@ -180,8 +182,9 @@
       ]
     },
     {
+      "_id": "tab-tag-3",
       "name": "Tag 3 — 13. Mai",
-      "tabDate": "2027-05-13",
+      "tabDate": "2027-05-12T22:00:00.000Z",
       "entries": [
         {
           "id": "ag-redteam",
@@ -247,6 +250,90 @@
               "link": ""
             }
           ]
+        }
+      ]
+    },
+    {
+      "_id": "tab-tag-3-ws-a",
+      "name": "Tag 3 — Workshop A",
+      "tabDate": "2027-05-12T22:00:00.000Z",
+      "entries": [
+        {
+          "id": "ag-ws-incident",
+          "topic": "Workshop: Incident Response unter Zeitdruck",
+          "description": "Ein simulierter Ransomware-Vorfall, von der ersten Meldung bis zur Kommunikation nach außen.",
+          "date": "2027-05-13T13:00:00.000Z",
+          "dateEnd": "2027-05-13T15:00:00.000Z",
+          "timeText": "",
+          "stage": "Workshop-Raum 1",
+          "type": ["Workshop"],
+          "category": ["Architecture"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-max",
+              "name": "Max Müller",
+              "image": "/img/speakers/max.jpg",
+              "company": "Allianz SE",
+              "position": "CISO",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "id": "ag-ws-pause-a",
+          "topic": "Kaffeepause",
+          "description": "",
+          "date": "2027-05-13T12:30:00.000Z",
+          "dateEnd": "2027-05-13T13:00:00.000Z",
+          "timeText": "",
+          "stage": "Foyer",
+          "type": ["Pause"],
+          "category": [],
+          "headerImg": "",
+          "speakers": []
+        }
+      ]
+    },
+    {
+      "_id": "tab-tag-3-ws-b",
+      "name": "Tag 3 — Workshop B",
+      "tabDate": "2027-05-12T22:00:00.000Z",
+      "entries": [
+        {
+          "id": "ag-ws-llm",
+          "topic": "Workshop: LLM-Anwendungen absichern",
+          "description": "Prompt Injection, Datenabfluss, Missbrauch — und welche Kontrollen wirklich greifen.",
+          "date": "2027-05-13T13:00:00.000Z",
+          "dateEnd": "2027-05-13T15:00:00.000Z",
+          "timeText": "",
+          "stage": "Workshop-Raum 2",
+          "type": ["Workshop"],
+          "category": ["KI"],
+          "headerImg": "",
+          "speakers": [
+            {
+              "speakerId": "spk-leila",
+              "name": "Leila Hassan",
+              "image": "/img/speakers/leila.jpg",
+              "company": "Fraunhofer SIT",
+              "position": "Quantum Security Lead",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "id": "ag-ws-pause-b",
+          "topic": "Kaffeepause",
+          "description": "",
+          "date": "2027-05-13T12:30:00.000Z",
+          "dateEnd": "2027-05-13T13:00:00.000Z",
+          "timeText": "",
+          "stage": "Foyer",
+          "type": ["Pause"],
+          "category": [],
+          "headerImg": "",
+          "speakers": []
         }
       ]
     }

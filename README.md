@@ -97,6 +97,7 @@ demo/embed-demo.html     # Embed-Demo (Custom Element im Browser, ohne Backend)
 | `<sv-collection>` ohne Detailseite (flache Liste)       | faq                              |
 | `<sv-gallery>` inkl. `<template slot="default">`        | index                            |
 | `<sv-image>` (editierbares Einzelbild)                  | kontakt                          |
+| `<sv-video>` (editierbares Video + Vorschaubild)        | index                            |
 | `<sv-capacity>` + `data-sv-show/hide`                   | index                            |
 | `<sv-langswitch>` + i18n (`/de`, `/en`)                 | header, alle Seiten              |
 | `filter` / `exclude` (ein Ausschnitt derselben Liste)   | speakers, faq, stream            |

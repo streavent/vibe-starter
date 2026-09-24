@@ -62,6 +62,22 @@
           >
           <a href="/programm" class="btn btn-ghost">Zum Programm</a>
         </div>
+        <!--
+          Editierbares Video (Contract 6.7): der Kunde tauscht im Editor Video und
+          Vorschaubild aus. /video/hero.mp4 ist ein Platzhalter-Pfad — leg deine eigene
+          Datei unter src/video/ ab.
+        -->
+        <sv-video
+          field="hero.clip"
+          default="/video/hero.mp4"
+          poster="/img/gallery/1.jpg"
+          class="hero-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+        ></sv-video>
       </div>
     </section>
 
@@ -102,7 +118,8 @@
           <p class="eyebrow">Streams</p>
           <h2 data-sv-field="streams.heading">Vier rote Fäden</h2>
           <p data-sv-field="streams.teaser">
-            Jeder Stream zieht sich durch alle drei Tage. Ein Ticket, freie Wahl.
+            Jeder Stream zieht sich durch alle drei Tage. Ein Ticket, freie
+            Wahl.
           </p>
         </div>
         <div class="grid grid-4 stream-grid">
@@ -246,10 +263,26 @@
               im CMS hochlädt. src -> image, alt -> alt, data-caption -> caption.
             -->
             <template slot="default">
-              <img src="/img/gallery/1.jpg" alt="" data-caption="Main Stage 2026" />
-              <img src="/img/gallery/2.jpg" alt="" data-caption="Networking Lounge" />
-              <img src="/img/gallery/3.jpg" alt="" data-caption="Workshop-Track" />
-              <img src="/img/gallery/4.jpg" alt="" data-caption="Abendveranstaltung" />
+              <img
+                src="/img/gallery/1.jpg"
+                alt=""
+                data-caption="Main Stage 2026"
+              />
+              <img
+                src="/img/gallery/2.jpg"
+                alt=""
+                data-caption="Networking Lounge"
+              />
+              <img
+                src="/img/gallery/3.jpg"
+                alt=""
+                data-caption="Workshop-Track"
+              />
+              <img
+                src="/img/gallery/4.jpg"
+                alt=""
+                data-caption="Abendveranstaltung"
+              />
             </template>
             <template slot="empty"><p>Bilder folgen.</p></template>
           </sv-gallery>
@@ -289,36 +322,51 @@
       </div>
     </section>
 
-    <!-- PROGRAMM-TEASER: <sv-agenda> mit nested <sv-each> -->
+    <!--
+      PROGRAMM-TEASER: group="day" + limit — die ersten vier Programmpunkte, unter ihrem Tag.
+      `limit` zählt Einträge, nicht Tage; welcher Tag das ist, sagen die Daten, nicht das Markup.
+    -->
     <section>
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">Programm</p>
-          <h2>Tag 1 im Überblick</h2>
+          <h2>Zum Auftakt</h2>
         </div>
-        <sv-agenda day="1">
+        <sv-agenda group="day" limit="4">
           <template>
-            <div class="slot">
-              <time data-bind="date" data-format="time"></time>
-              <div>
-                <h4>
-                  <a data-bind="url"><span data-bind="topic"></span></a>
-                </h4>
-                <div class="meta">
-                  <span data-bind="stage"></span> ·
-                  <span data-bind="type" data-join=", "></span>
-                </div>
-                <sv-each field="speakers">
-                  <template>
-                    <span class="spk"
-                      ><img data-bind="image" alt="" /><span
-                        data-bind="name"
-                      ></span
-                    ></span>
-                  </template>
-                </sv-each>
-              </div>
-            </div>
+            <section class="agenda-day">
+              <h3>
+                Tag <span data-bind="dayNumber"></span
+                ><span data-sv-show="dayDate">
+                  · <span data-bind="dayDate" data-format="date"></span
+                ></span>
+              </h3>
+              <sv-each field="entries">
+                <template>
+                  <div class="slot">
+                    <time data-bind="date" data-format="time"></time>
+                    <div>
+                      <h4>
+                        <a data-bind="url"><span data-bind="topic"></span></a>
+                      </h4>
+                      <div class="meta">
+                        <span data-bind="stage"></span> ·
+                        <span data-bind="type" data-join=", "></span>
+                      </div>
+                      <sv-each field="speakers">
+                        <template>
+                          <span class="spk"
+                            ><img data-bind="image" alt="" /><span
+                              data-bind="name"
+                            ></span
+                          ></span>
+                        </template>
+                      </sv-each>
+                    </div>
+                  </div>
+                </template>
+              </sv-each>
+            </section>
           </template>
           <template slot="empty"><p>Programm folgt.</p></template>
         </sv-agenda>

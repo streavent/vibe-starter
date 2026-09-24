@@ -32,8 +32,8 @@ Streavent an. Du baust **kein** CMS und **keine** Build-Pipeline — nur die Sei
 Optional:
 
 - `collections[]` — eigene Datenobjekte des Kunden (s. u.)
-- `dynamicPages[]` — `template`, `collection` (`speakers`, `agenda` **oder ein eigener
-  Collection-Name**), `route` mit `:slug`, `slugFrom`
+- `dynamicPages[]` — `template`, `collection` (`speakers`, `agenda`, `sponsors` **oder ein
+  eigener Collection-Name**), `route` mit `:slug`, `slugFrom`
 - `seo` — `defaultOgImage`, `titleSuffix`
 - `redirects` — `{ "/alt.html": "/neu" }`, nur wenn die Site eine bestehende ABLÖST. Der
   Normalfall (`.html` fällt weg) passiert von selbst; hier stehen nur echte Umbenennungen.
@@ -63,20 +63,30 @@ UNFORMATIERT in beliebige Attribute (`style` und `on*` gesperrt). Auf einem Komp
 einer Detailseite bindet `data-bind-attr` gegen den Datensatz der Seite:
 `<sv-agenda data-bind-attr="filter:agendaFilter">`.
 
+**Tage nie hart codieren.** Ein Programm über mehrere Tage ist **eine**
+`<sv-agenda group="day">` — Tabs mit demselben Datum werden ein Tag, jeder Tab bleibt eine Spur
+in `tracks`. Nie `day="1"`, `day="2"` … nebeneinander: `day` ist ein **Tab-Index**, parallele
+Workshops liegen oft als eigene Tabs am selben Datum und fielen still weg. Die Tagesnummer für
+„Tag 2" ist `dayNumber` (am Tag); `dayIndex` an einem Eintrag ist die Position seines Tabs, keine
+Tagesnummer. Für eigene Raster in JavaScript die flache `<sv-agenda>` mit `dayDate`/`dayName`
+nehmen (Contract 10.5).
+
 **Katalog (Felder → siehe `dist/COMPONENT_CATALOG.md` für Details):**
 
-| Tag                        | Art          | Wichtigste Felder                                                                                     |
-| -------------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
-| `<sv-event>`               | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                               |
-| `<sv-capacity>`            | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                 |
-| `<sv-speakers>`            | Liste        | name, bio, image, company, position, website, linkedIn, twitter, featured, category                   |
-| `<sv-agenda>`              | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName                |
-| `<sv-sponsors>`            | Liste        | name, logoUrl, bannerUrl, description, website, documents (`group="category"`: name, color, sponsors) |
-| `<sv-events>`              | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                            |
-| `<sv-gallery field="…">`   | Liste        | image, alt, caption (kundeneditierbar; Bundle-Defaults via `<template slot="default">`)               |
-| `<sv-collection name="…">` | Liste        | die im Manifest deklarierten Felder dieser Collection (+ `slug`, `url`)                               |
-| `<sv-langswitch>`          | Liste        | code, label, url, isCurrent                                                                           |
-| `<sv-image field="…">`     | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                              |
+| Tag                        | Art          | Wichtigste Felder                                                                                                |
+| -------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `<sv-event>`               | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                                          |
+| `<sv-capacity>`            | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                            |
+| `<sv-speakers>`            | Liste        | name, bio, image, company, position, website, linkedIn, twitter, featured, category                              |
+| `<sv-agenda>`              | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName, dayDate, dayIndex, dayId |
+| `<sv-agenda group="day">`  | Liste (Tage) | dayName, dayDate, dayNumber, entries, tracks (name, entries), hasTracks, stages                                  |
+| `<sv-sponsors>`            | Liste        | name, logoUrl, bannerUrl, description, website, documents, slug, url (`group="category"`: name, color, sponsors) |
+| `<sv-events>`              | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                                       |
+| `<sv-gallery field="…">`   | Liste        | image, alt, caption (kundeneditierbar; Bundle-Defaults via `<template slot="default">`)                          |
+| `<sv-collection name="…">` | Liste        | die im Manifest deklarierten Felder dieser Collection (+ `slug`, `url`)                                          |
+| `<sv-langswitch>`          | Liste        | code, label, url, isCurrent                                                                                      |
+| `<sv-image field="…">`     | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                                         |
+| `<sv-video field="…">`     | Einzelvideo  | Attribute: field (Pflicht), default, poster; autoplay/muted/loop/playsinline/preload/class werden durchgereicht  |
 
 Auf Detailseiten (`dynamicPages`) bindest du die Felder der Collection **direkt** (kein `<sv-*>`-Wrapper).
 Zusätzlich verfügbar auf detail-verlinkbaren Einträgen: `url`, `slug`.
@@ -154,6 +164,7 @@ Zwei Regeln, die man sonst erst beim Publish merkt:
 
 - **Erfinde keine Tags/Felder.** Nur die oben gelisteten existieren — alles andere meldet der Validator.
 - Editierbare Bilder immer `<sv-image>`/`<sv-gallery>` (Responsive/Formate automatisch), Design-Assets als normales `<img>`.
+- Editierbare Videos (Datei, kein YouTube/Vimeo) als `<sv-video>`; der Kunde tauscht Video und Vorschaubild. Video-Links gehören in ein Collection-Feld `video` + Lightbox, Standard-Paar dort: `poster` (image) + `video` (video).
 - Keine eigene Seite mit reserviertem Routennamen.
 - Light DOM — dein CSS greift voll; style die `<sv-*>` ganz normal über Klassen/Selektoren.
 

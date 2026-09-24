@@ -297,27 +297,40 @@ Die eine maschinenlesbare Datei im Projekt-Root, in der du das deklarierst, was 
 
 **Feld-Referenz:**
 
-| Feld                        | Pflicht | Bedeutung                                                  |
-| --------------------------- | ------- | ---------------------------------------------------------- |
-| `name`                      | ✅      | Anzeigename der Site (interner Fallback-Titel)             |
-| `languages`                 | ✅      | Liste der Sprachcodes, z. B. `["de", "en"]`                |
-| `defaultLanguage`           | ✅      | Standardsprache (muss in `languages` sein)                 |
-| `collections[]`             | –       | Eigene Datenobjekte des Kunden (siehe 4.9)                 |
-| `dynamicPages[]`            | –       | Dynamische Detail-Vorlagen (leer/weglassen, wenn keine)    |
-| `dynamicPages[].template`   | ✅\*    | Dateiname der Vorlage in `src/`                            |
-| `dynamicPages[].collection` | ✅\*    | `speakers`, `agenda` oder ein eigener `collections[].name` |
-| `dynamicPages[].route`      | ✅\*    | URL-Muster mit `:slug`                                     |
-| `dynamicPages[].slugFrom`   | ✅\*    | Feld, aus dem der Slug erzeugt wird                        |
-| `seo.defaultOgImage`        | –       | Fallback-OG-Bild (Pfad im Bundle)                          |
-| `seo.titleSuffix`           | –       | Suffix, das an jeden Seitentitel gehängt wird              |
-| `redirects`                 | –       | `{ alt: neu }` für Adressen einer abgelösten Site (s. u.)  |
+| Feld                        | Pflicht | Bedeutung                                                              |
+| --------------------------- | ------- | ---------------------------------------------------------------------- |
+| `name`                      | ✅      | Anzeigename der Site (interner Fallback-Titel)                         |
+| `languages`                 | ✅      | Liste der Sprachcodes, z. B. `["de", "en"]`                            |
+| `defaultLanguage`           | ✅      | Standardsprache (muss in `languages` sein)                             |
+| `collections[]`             | –       | Eigene Datenobjekte des Kunden (siehe 4.9)                             |
+| `dynamicPages[]`            | –       | Dynamische Detail-Vorlagen (leer/weglassen, wenn keine)                |
+| `dynamicPages[].template`   | ✅\*    | Dateiname der Vorlage in `src/`                                        |
+| `dynamicPages[].collection` | ✅\*    | `speakers`, `agenda`, `sponsors` oder ein eigener `collections[].name` |
+| `dynamicPages[].route`      | ✅\*    | URL-Muster mit `:slug`                                                 |
+| `dynamicPages[].slugFrom`   | ✅\*    | Feld, aus dem der Slug erzeugt wird                                    |
+| `seo.defaultOgImage`        | –       | Fallback-OG-Bild (Pfad im Bundle)                                      |
+| `seo.titleSuffix`           | –       | Suffix, das an jeden Seitentitel gehängt wird                          |
+| `redirects`                 | –       | `{ alt: neu }` für Adressen einer abgelösten Site (s. u.)              |
 
 > \* Pflicht, sobald ein `dynamicPages`-Eintrag existiert.
 >
-> **Verfügbare Collections** für Detailseiten: `speakers` und `agenda` aus den Streavent-Daten —
-> plus **jede eigene Collection**, die du unter `collections[]` deklariert hast (siehe 4.9). Ein
-> Name, den es weder als Streavent-Collection noch in deiner Deklaration gibt, schlägt bei der
-> Validierung fehl. (Sponsoren-Detailseiten sind noch nicht verdrahtet.)
+> **Verfügbare Collections** für Detailseiten: `speakers`, `agenda` und `sponsors` aus den
+> Streavent-Daten — plus **jede eigene Collection**, die du unter `collections[]` deklariert hast
+> (siehe 4.9). Ein Name, den es weder als Streavent-Collection noch in deiner Deklaration gibt,
+> schlägt bei der Validierung fehl. Diese drei Namen sind reserviert: Eine eigene Collection
+> darf nicht so heißen.
+>
+> **Breaking Change — `sponsors`:** Der Name ist neu reserviert. Hat dein Bundle eine eigene
+> Collection `sponsors` deklariert, **benenne sie vor dem nächsten Upload um** (z. B. `partner`)
+> und passe `dynamicPages[].collection`, `<sv-collection name="…">` und die Inhalte an. Ein
+> erneuter Upload mit dem alten Namen schlägt bei der Validierung fehl; wird die bestehende Site
+> nur neu gerendert, liest `collection: "sponsors"` still die Streavent-Sponsoren — deine
+> eigenen Detailseiten liefern dann 404.
+>
+> Eine **Sponsoren-Detailseite** zeigt einen Sponsor mit seinen Feldern aus 5.3 plus `category`
+> (Name seiner Stufe). Zwei Sponsoren mit demselben Namen bekommen verschiedene Slugs — an den
+> lesbaren Teil wird ein kurzer, stabiler Hash ihrer Id gehängt, genau wie bei Speakern und
+> Sessions. Auf Übersichtsseiten verlinkst du mit `data-bind="url"`.
 
 #### Alte Adressen mitnehmen: `redirects`
 
@@ -411,13 +424,14 @@ Ab dann kann der Kunde ihn inline überschreiben. Du musst nichts in eine separa
 
 ### 4.3 Feld-Typen
 
-| `data-sv-type`   | Für was                    | Was der Kunde editiert                                      | Default kommt aus                 |
-| ---------------- | -------------------------- | ----------------------------------------------------------- | --------------------------------- |
-| `text` (Default) | Überschriften, kurze Texte | Reiner Text (eine/mehrere Zeilen)                           | Textinhalt des Elements           |
-| `richtext`       | Fließtext mit Formatierung | Text + begrenzte Formatierung (fett, kursiv, Links, Listen) | innerer HTML-Inhalt               |
-| `link`           | Logo-/Icon-Link            | Nur das Ziel (`href`), Text bleibt wie gestaltet            | `href`-Attribut                   |
-| `cta`            | Buttons / Call-to-Action   | Label **und** Ziel (`href`)                                 | Text + `href`                     |
-| `image`          | Austauschbares Bild        | Bild hochladen/zuschneiden + Alt-Text                       | siehe [Kap. 6](#6-bilder--assets) |
+| `data-sv-type`   | Für was                    | Was der Kunde editiert                                      | Default kommt aus                                                         |
+| ---------------- | -------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `text` (Default) | Überschriften, kurze Texte | Reiner Text (eine/mehrere Zeilen)                           | Textinhalt des Elements                                                   |
+| `richtext`       | Fließtext mit Formatierung | Text + begrenzte Formatierung (fett, kursiv, Links, Listen) | innerer HTML-Inhalt                                                       |
+| `link`           | Logo-/Icon-Link            | Nur das Ziel (`href`), Text bleibt wie gestaltet            | `href`-Attribut                                                           |
+| `cta`            | Buttons / Call-to-Action   | Label **und** Ziel (`href`)                                 | Text + `href`                                                             |
+| `image`          | Austauschbares Bild        | Bild hochladen/zuschneiden + Alt-Text                       | siehe [Kap. 6](#6-bilder--assets)                                         |
+| `video`          | Austauschbares Video       | Videodatei + Vorschaubild ersetzen (`{ src, poster }`)      | `src`/`poster` am `<video>`, siehe [6.7](#67-editierbare-videos-sv-video) |
 
 ```html
 <!-- text -->
@@ -491,13 +505,16 @@ footer.copyright
 - Der Edit-Modus lädt **nur für eingeloggte Bearbeiter** — normale Besucher sehen davon nichts.
 - Editierbare Elemente bekommen beim Hovern eine Markierung. Klick → inline bearbeiten
   (Text direkt, `cta`/`link` über ein kleines Formular für Label/Ziel, `image` über den
-  Upload-/Zuschneide-Dialog).
+  Upload-/Zuschneide-Dialog, `video` über einen Dialog für Video und Vorschaubild).
+- **Der Editor verändert Layout und Stil deiner Elemente nicht; er markiert nur.** Die
+  Markierung lebt ausschließlich in `outline`, Cursor und Chips. Ein runder Button bleibt
+  im Editor rund, ein Button behält seine Farbe – was du im Edit-Modus siehst, ist dein CSS.
 - Speichern → Wert im Content-Store → Seite wird neu gerendert.
 
 | Der Kunde **kann**                  | Der Kunde **kann nicht**                     |
 | ----------------------------------- | -------------------------------------------- |
 | Markierte Texte ändern              | Sections hinzufügen/verschieben/löschen      |
-| Bilder austauschen                  | Layout/Design ändern                         |
+| Bilder und Videos austauschen       | Layout/Design ändern                         |
 | Link-Ziele & Button-Labels anpassen | Etwas editieren, das **nicht** markiert ist  |
 | Galerie-Bilder verwalten            | Speaker-/Agenda-/Partner-Inhalte hier ändern |
 
@@ -537,7 +554,7 @@ Dann sag dem Editor selbst, welches Element er umrahmen soll:
 
 <!-- Mobile-Ansicht: die gerenderte Liste -->
 <div class="ag-list" data-sv-widget-region="sv-agenda">
-  <sv-agenda day="1">…</sv-agenda>
+  <sv-agenda>…</sv-agenda>
 </div>
 
 <!-- Galerie im Slider: den sichtbaren Container umrahmen, nicht die laufenden Bilder -->
@@ -584,6 +601,8 @@ Regeln:
   nur dort ist bekannt, ob das Zielmodul einen einzelnen Datensatz öffnen kann. Aktuell:
   `sv-agenda`. Für alles andere bleibt der Block-Rahmen stehen.
 - Ein Datensatz ohne Id bekommt keinen Stempel; dann greift wieder der Block-Rahmen.
+- Bei `<sv-agenda group="day">` trägt nicht der Tag den Stempel, sondern jede Karte aus
+  `<sv-each field="entries">` — ein Tag hat keinen Datensatz, die Sessions darin schon.
 
 #### Wenn deine Seite sich neu rendert
 
@@ -683,6 +702,11 @@ Vimeo-Link. Binde ihn also genauso: `data-bind="video"`, `data-bind-attr="data-l
 Der Unterschied liegt allein im CMS: `text` zwingt den Organisator, einen Pfad zu **tippen**,
 den er nur kennt, wenn er das Bundle gesehen hat. `video` gibt ihm einen Upload-Knopf und ein
 Linkfeld. Deklariere `video` überall dort, wo heute ein Pfad in einem `text`-Feld steht.
+
+> **Standard-Paar für Videos in Collections:** ein `poster`-Feld vom Typ `image` (das
+> Vorschaubild, das du im Raster zeigst) plus ein `video`-Feld vom Typ `video` (das, was
+> die Lightbox abspielt). So kann der Kunde beides getrennt austauschen, und ein YouTube-Link
+> bekommt trotzdem ein eigenes Vorschaubild.
 
 > **Deine Wiedergabe muss beide Fälle können.** Eine eigene Lightbox, die den Wert in ein
 > `<video src>` steckt, zeigt bei einem YouTube-Link nichts. Prüfe den Wert und baue im
@@ -870,7 +894,7 @@ Endzeiten ableitet, kann aus „09:00 bis 10:30 Uhr" nichts rechnen. Sie braucht
 maschinenlesbar im DOM:
 
 ```html
-<sv-agenda day="1">
+<sv-agenda>
   <template>
     <div class="slot" data-bind-attr="data-start:date, data-end:dateEnd, data-stage:stage">
       <time data-bind="date" data-format="time"></time>
@@ -919,7 +943,7 @@ unbekannte Feldnamen als Warnung — beides schon beim `sv validate`, nicht erst
 einer Bühne, die Speaker eines Themas, die Sponsoren einer Stufe:
 
 ```html
-<sv-agenda day="2" filter="stage:Hauptbühne">
+<sv-agenda group="day" filter="stage:Hauptbühne">
   <template>…</template>
   <template slot="empty">…</template>
 </sv-agenda>
@@ -935,6 +959,8 @@ Regeln:
 - Ein Eintrag **ohne** das Feld passt nie.
 - Ein `filter` ohne verwertbares Paar filtert nicht — die Liste bleibt vollständig.
 - Kombinierbar mit `sort` und `limit` (Reihenfolge: filtern → sortieren → begrenzen).
+- Bei `<sv-agenda group="day">` wirken `filter`, `exclude`, `sort` und `limit` auf die
+  **Einträge** innerhalb der Tage, nicht auf die Tage. Ein Tag ohne Treffer fällt ganz weg.
 
 #### `exclude` — die Gegenrichtung
 
@@ -962,7 +988,7 @@ Dafür schreibst du `data-bind-attr` **auf die Komponente selbst**:
 
 ```html
 <!-- src/stream.html — jede Stream-Seite zeigt nur ihr eigenes Programm -->
-<sv-agenda day="2" data-bind-attr="filter:agendaFilter">
+<sv-agenda data-bind-attr="filter:agendaFilter">
   <template>…</template>
   <template slot="empty"><p>Programm folgt.</p></template>
 </sv-agenda>
@@ -1052,51 +1078,126 @@ Zeile mit Abstand.
 
 #### `<sv-agenda>` — Programm / Sessions
 
-Die Agenda ist nach **Tagen/Tabs** gegliedert, jeder Tag hat **Einträge** (= Sessions), jeder
-Eintrag hat **Speaker**. Du iterierst Einträge; mit `<sv-each>` gehst du in die Speaker.
+Im CMS ist die Agenda in **Tabs** gegliedert, jeder Tab hat **Einträge** (= Sessions), jeder
+Eintrag hat **Speaker**. Ein Tab ist aber **nicht** dasselbe wie ein Tag: Viele Veranstalter
+legen parallele Workshops als eigene Tabs an, alle mit demselben Datum. Deshalb baust du das
+Programm **aus den Daten** und nie aus festen Tagesblöcken im Markup.
 
-**Attribute:** `day` (Index, `1`-basiert, filtert auf einen Tag), `limit`, `filter`
-
-**Eintrags-Felder:**
-
-| Feld            | Typ           | Bedeutung                                                                 |
-| --------------- | ------------- | ------------------------------------------------------------------------- |
-| `topic`         | string        | Titel der Session                                                         |
-| `description?`  | string (HTML) | Beschreibung                                                              |
-| `date`          | ISO-string    | Start (mit `data-format` formatieren)                                     |
-| `dateEnd?`      | ISO-string    | Ende                                                                      |
-| `timeText?`     | string        | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden)                 |
-| `stage?`        | string        | Bühne/Raum                                                                |
-| `type?`         | string[]      | Typ-Tags (z. B. „Keynote")                                                |
-| `category?`     | string[]      | Kategorie-Tags                                                            |
-| `headerImg?`    | string        | Header-Bild der Session                                                   |
-| `speakers`      | array         | Speaker dieses Eintrags → mit `<sv-each>`                                 |
-| `highlight`     | boolean       | Optische Hervorhebung, im CMS pro Eintrag setzbar (→ `data-sv-show`)      |
-| `stageColor`    | string        | Farbe der Bühne aus den Event-Einstellungen (`''`, wenn keine hinterlegt) |
-| `typeColor`     | string        | Farbe des ersten passenden Typ-Tags                                       |
-| `categoryColor` | string        | Farbe des ersten passenden Kategorie-Tags                                 |
-
-**Speaker-Felder (innerhalb eines Eintrags):** `name`, `image?`, `company?`, `position?`, `link?`
+Der Normalfall ist **eine** `<sv-agenda group="day">` für das ganze Programm. Sie liefert einen
+Datensatz pro **Kalendertag**; mit `<sv-each field="entries">` gehst du in die Einträge des
+Tages, mit `<sv-each field="speakers">` darin in die Speaker:
 
 ```html
-<sv-agenda day="1">
+<sv-agenda group="day">
   <template>
-    <div class="slot">
-      <time data-bind="date" data-format="time"></time>
-      <h4 data-bind="topic"></h4>
-      <span data-bind="stage"></span>
-      <span data-bind="type" data-join=" · "></span>
+    <section class="tag" data-bind-attr="data-day:dayDate">
+      <h2>
+        Tag <span data-bind="dayNumber"></span>
+        <span data-sv-show="dayDate">· <span data-bind="dayDate" data-format="date"></span></span>
+      </h2>
 
-      <sv-each field="speakers">
+      <!-- nur an Tagen mit parallelen Tabs -->
+      <p data-sv-show="hasTracks">
+        Parallel:
+        <sv-each field="tracks"
+          ><template><span data-bind="name"></span></template
+        ></sv-each>
+      </p>
+
+      <sv-each field="entries">
         <template>
-          <span class="speaker"><img data-bind="image" alt="" /><span data-bind="name"></span></span>
+          <div class="slot" data-bind-attr="data-start:date, data-track:dayName">
+            <time data-bind="date" data-format="time"></time>
+            <h4 data-bind="topic"></h4>
+            <span data-bind="stage"></span>
+            <span data-bind="type" data-join=" · "></span>
+
+            <sv-each field="speakers">
+              <template>
+                <span class="speaker"><img data-bind="image" alt="" /><span data-bind="name"></span></span>
+              </template>
+            </sv-each>
+          </div>
         </template>
       </sv-each>
-    </div>
+    </section>
   </template>
   <template slot="empty"><p>Programm folgt.</p></template>
 </sv-agenda>
 ```
+
+So entsteht ein Tag:
+
+- **Tabs mit demselben Datum** (`tabDate` im CMS) werden **ein** Tag. Jeder Tab bleibt als Spur
+  in `tracks` erhalten — für ein Spaltenlayout musst du keine Tab-Namen zerlegen.
+- **Ein Tab ohne Datum** ist ein eigener Tag. Das Zusammenlegen verbessert, wo die Daten es
+  hergeben, und ist nie eine Voraussetzung.
+- `entries` ist nach Startzeit sortiert. Ein Punkt, der in mehreren Spuren steht (dieselbe
+  Kaffeepause in drei Workshops), steht dort **einmal**. Verglichen werden Startzeit, Bühne
+  (`stage`) und Titel, **exakt**: Eine Kaffeepause ohne Bühne in drei Tabs ist ein Punkt, ein
+  „Q&A" zur selben Zeit in zwei verschiedenen Räumen sind zwei. Ein Tippfehler im CMS ergibt
+  zwei Einträge — das korrigiert der Kunde im CMS, der Renderer rät nicht. In
+  `tracks[].entries` steht jeder Punkt dagegen in jeder seiner Spuren.
+- `filter`, `exclude`, `sort` und `limit` wirken auf die Einträge. Ein Tag oder eine Spur ohne
+  Treffer fällt weg, `dayNumber` zählt die verbleibenden Tage.
+- **Zwei Zahlen, zwei Fragen:** `dayNumber` hängt am **Tag** und ist die Zahl für die
+  Überschrift („Tag 2"). `dayIndex` hängt an jedem **Eintrag** und ist die Position seines Tabs
+  (das, was `day="N"` auswählt) — an einem Tag mit drei Workshop-Tabs tragen die Einträge 2, 3
+  und 4. Innerhalb von `<sv-each field="entries">` meint jeder Name den Eintrag; für die
+  Tages-Überschrift nimm deshalb immer `dayNumber` außerhalb davon.
+- `dayDate` ist ein Kalenderdatum (`JJJJ-MM-TT`) und wird mit `data-format="date"` genau als
+  dieser Tag ausgegeben, unabhängig von der Zeitzone des Events.
+
+Ohne `group` iterierst du die **flache** Liste aller Einträge — jeder trägt seinen Tag in
+`dayName`/`dayDate`. Das ist die Quelle, wenn du Tage, Raster oder Filter selbst in JavaScript
+baust (siehe [10.5](#105-eigene-aufbauten-aus-sv--ausgabe)).
+
+> ⚠️ **`day` ist ein Tab-Index, kein Tag.** `<sv-agenda day="3">` heißt „der dritte Tab im CMS".
+> Liegen dort drei Workshop-Tabs am selben Datum, trifft `day="3"` den ersten Workshop, und alles
+> dahinter fehlt still — auf der ersten echten Seite, die so gebaut war, 32 von 72 Programmpunkten.
+> Nutze `day` nur, wenn du wirklich genau **einen bestimmten Tab** willst. Der Validator warnt
+> (`agenda-day-index`), sobald eine Seite mehrere `day=`, ein `day` ab `2` oder ein nicht
+> numerisches `day` enthält — und wenn `day` neben `group="day"` steht, wo es ignoriert wird.
+
+**Attribute:** `group="day"` (nach Kalendertagen gruppieren), `day` (Tab-Index, `1`-basiert,
+genau ein Tab), `filter`, `exclude`, `sort`, `limit`
+
+**Eintrags-Felder:**
+
+| Feld            | Typ           | Bedeutung                                                                                  |
+| --------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| `topic`         | string        | Titel der Session                                                                          |
+| `description?`  | string (HTML) | Beschreibung                                                                               |
+| `date`          | ISO-string    | Start (mit `data-format` formatieren)                                                      |
+| `dateEnd?`      | ISO-string    | Ende                                                                                       |
+| `timeText?`     | string        | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden)                                  |
+| `stage?`        | string        | Bühne/Raum                                                                                 |
+| `type?`         | string[]      | Typ-Tags (z. B. „Keynote")                                                                 |
+| `category?`     | string[]      | Kategorie-Tags                                                                             |
+| `headerImg?`    | string        | Header-Bild der Session                                                                    |
+| `speakers`      | array         | Speaker dieses Eintrags → mit `<sv-each>`                                                  |
+| `highlight`     | boolean       | Optische Hervorhebung, im CMS pro Eintrag setzbar (→ `data-sv-show`)                       |
+| `stageColor`    | string        | Farbe der Bühne aus den Event-Einstellungen (`''`, wenn keine hinterlegt)                  |
+| `typeColor`     | string        | Farbe des ersten passenden Typ-Tags                                                        |
+| `categoryColor` | string        | Farbe des ersten passenden Kategorie-Tags                                                  |
+| `dayName`       | string        | Name des Tabs, so wie der Veranstalter ihn getippt hat                                     |
+| `dayDate`       | string        | Datum des Tabs als `JJJJ-MM-TT` (`''`, wenn der Tab keins hat) → `data-format`             |
+| `dayIndex`      | number        | Position des **Tabs**, `1`-basiert (genau das, was `day="N"` auswählt) — keine Tagesnummer |
+| `dayId`         | string        | Stabile Id des Tabs — ändert sich nicht, wenn der Tab umbenannt oder verschoben wird       |
+
+**Tages-Felder** (bei `group="day"`):
+
+| Feld        | Typ      | Bedeutung                                                                                     |
+| ----------- | -------- | --------------------------------------------------------------------------------------------- |
+| `dayName`   | string   | Name des ersten Tabs dieses Tages                                                             |
+| `dayDate`   | string   | Datum als `JJJJ-MM-TT` (`''` bei einem Tab ohne Datum)                                        |
+| `dayNumber` | number   | Position des **Tages** in der Ausgabe, `1`-basiert — die Zahl für „Tag 2"                     |
+| `entries`   | array    | Alle Einträge des Tages, nach Startzeit, gemeinsame Punkte einmal (Startzeit + Bühne + Titel) |
+| `tracks`    | array    | Eine Spur pro Tab: `{ name, entries }`                                                        |
+| `hasTracks` | boolean  | Mehr als eine Spur an diesem Tag (→ `data-sv-show` für die Spaltenansicht)                    |
+| `stages`    | string[] | Die Bühnen/Räume des Tages, numerisch sortiert („Raum 10" nach „Raum 9")                      |
+
+**Speaker-Felder (innerhalb eines Eintrags):** `name`, `image?`, `company?`, `position?`, `link?`
 
 #### `<sv-sponsors>` — Sponsoren & Aussteller
 
@@ -1108,15 +1209,17 @@ Sponsoren sind in **Kategorien** (z. B. „Gold", „Silber") gruppiert. Du kann
 
 **Sponsor-Felder:**
 
-| Feld            | Typ    | Bedeutung                                   |
-| --------------- | ------ | ------------------------------------------- |
-| `name`          | string | Name                                        |
-| `logoUrl`       | string | Logo-URL                                    |
-| `bannerUrl?`    | string | Banner-/Hero-Bild                           |
-| `description?`  | string | Beschreibung                                |
-| `website?`      | string | Website-URL                                 |
-| `websiteLabel?` | string | Link-Text (z. B. „Zur Website")             |
-| `documents`     | array  | Dateien → `<sv-each>` mit `url`, `fileName` |
+| Feld            | Typ    | Bedeutung                                                                   |
+| --------------- | ------ | --------------------------------------------------------------------------- |
+| `name`          | string | Name                                                                        |
+| `logoUrl`       | string | Logo-URL                                                                    |
+| `bannerUrl?`    | string | Banner-/Hero-Bild                                                           |
+| `description?`  | string | Beschreibung                                                                |
+| `website?`      | string | Website-URL                                                                 |
+| `websiteLabel?` | string | Link-Text (z. B. „Zur Website")                                             |
+| `documents`     | array  | Dateien → `<sv-each>` mit `url`, `fileName`                                 |
+| `slug`          | string | Stabiler Handle, auch ohne Detailseite                                      |
+| `url?`          | string | Link zur Detailseite (nur mit `dynamicPages`-Eintrag `sponsors`, siehe 3.4) |
 
 ```html
 <!-- flach, alle Sponsoren -->
@@ -1399,6 +1502,60 @@ vorhandenen. Layout und Markup bleiben deins.
 - Setze beim Hero `loading="eager"`, bei allem anderen bleibt `lazy` der Default.
 - Deine eigenen Design-Assets vorher komprimieren und mit `width`/`height` versehen.
 
+### 6.7 Editierbare Videos: `<sv-video>`
+
+Für ein Video, das **fest in der Seite** steht (Hero-Loop, Aftermovie-Teaser) und das der
+Kunde austauschen können soll. Es funktioniert wie `<sv-image>`: du lieferst Video und
+Vorschaubild als Default aus deinem Bundle, der Kunde ersetzt sie im Editor.
+
+```html
+<sv-video
+  field="hero.clip"
+  default="/video/hero.mp4"
+  poster="/img/hero-poster.jpg"
+  class="hero-video"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="metadata"></sv-video>
+```
+
+Daraus wird ein ganz normales `<video>` mit deinen Klassen und Wiedergabe-Attributen.
+
+**Attribute:**
+
+| Attribut     | Pflicht | Bedeutung                                                                                                      |
+| ------------ | ------- | -------------------------------------------------------------------------------------------------------------- |
+| `field`      | ✅      | Content-Store-Schlüssel (wie `data-sv-field`)                                                                  |
+| `default`    | –       | Default-Videodatei aus deinem Bundle, bis der Kunde eine hochlädt                                              |
+| `poster`     | –       | Default-Vorschaubild aus deinem Bundle (wird vor dem Abspielen gezeigt)                                        |
+| alle anderen | –       | gehen unverändert aufs `<video>`: `class`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`, `controls` … |
+
+Inhalt zwischen den Tags (z. B. `<source>`-Alternativen, `<track>`-Untertitel oder ein
+Fallback-Text) bleibt im `<video>` erhalten. Lädt der Kunde ein Video hoch, gewinnt dessen
+`src` über deine `<source>`-Kinder.
+
+**Editieren (Kunde):** Klick aufs Video im Edit-Modus → Dialog mit zwei Aktionen:
+**Video ersetzen** und **Vorschaubild ersetzen** (hochladen). Ein Vorschaubild wird nicht
+automatisch aus dem Video erzeugt. Beide Teile sind unabhängig: Ersetzt der Kunde nur das
+Vorschaubild, läuft weiter dein Video, und umgekehrt. Im Editor startet ein Klick das Video
+nicht, er öffnet den Dialog.
+
+**Ein handgeschriebenes `<video>` geht auch:** `data-sv-field` reicht, der Typ `video` ergibt
+sich aus dem Tag (wie bei `<img>`):
+
+```html
+<video data-sv-field="hero.clip" src="/video/hero.mp4" poster="/img/hero-poster.jpg" autoplay muted loop playsinline></video>
+```
+
+> **Nur Videodateien** (`.mp4`, `.webm`). Ein `<video>` kann keinen YouTube- oder Vimeo-Link
+> abspielen. Für Videos, die als Link gepflegt werden, nimm ein `video`-Feld in einer
+> Collection plus Lightbox (siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)).
+
+> **Autoplay im Browser:** Ein Video startet automatisch nur mit `muted` (und auf iOS mit
+> `playsinline`). Setz für Hintergrund-Loops also immer alle drei: `autoplay muted playsinline`.
+
 ## 7. Mehrsprachigkeit (i18n)
 
 ### 7.1 Grundidee: eine Seite, viele Sprachen
@@ -1653,6 +1810,95 @@ Content-Security-Policy mit einer **CDN-Allowlist** für Skripte dazukommen. Heu
 
 So bist du auf die spätere Härtung vorbereitet, ohne heute eingeschränkt zu sein.
 
+### 10.5 Eigene Aufbauten aus `<sv-*>`-Ausgabe
+
+Manchmal reicht das Template nicht: ein Zeitraster mit Spalten je Workshop, eine Filterleiste
+aus den vorhandenen Räumen, Tabs, die dein Script baut. Dann gilt das Muster aus 5.2.1 —
+**Streavent rendert die Inhalte, dein JS ordnet sie an.** Die Runtime rendert server-seitig
+alle Einträge in einen Quell-Container, dein Script leitet daraus die Struktur ab und
+**verschiebt** die fertigen Knoten hinein. Nimm dafür die flache `<sv-agenda>` (ohne `day`) mit
+`dayDate`, `dayName` und `stage` in `data-bind-attr` — die Form der Daten steht dann nirgends
+im Markup, und ein vierter Workshop wird eine vierte Spalte, ohne dass jemand die Seite anfasst.
+
+```html
+<div class="ag-tabs" data-tage-tabs></div>
+<!-- leer, dein JS füllt sie -->
+
+<div class="ag-panels" data-tage-panels data-sv-widget-region="sv-agenda">
+  <div class="ag-quelle">
+    <sv-agenda>
+      <template>
+        <article class="slot" data-bind-attr="data-start:date, data-day:dayDate, data-track:dayName, data-stage:stage">
+          <time data-bind="date" data-format="time"></time>
+          <h4 data-bind="topic"></h4>
+          <span class="spur" data-bind="dayName"></span>
+        </article>
+      </template>
+      <template slot="empty"><p>Das Programm folgt.</p></template>
+    </sv-agenda>
+  </div>
+</div>
+```
+
+Ohne JavaScript bleibt die Quelle stehen: alle Punkte in einer Liste, jeder mit seinem Tag.
+Vollständig und lesbar — das ist die Fassung für Crawler und für den Fall, dass dein Script
+scheitert.
+
+Vier Fallstricke haben auf der ersten Seite, die so gebaut wurde, jeweils einen halben Tag
+gekostet:
+
+1. **`<sv-agenda>` ersetzt sich selbst.** Sie rendert renderless und ist danach nicht mehr im
+   Baum. Wer sie nach dem Rendern sucht, findet nichts. Anker ist **dein eigener Container**
+   (`.ag-quelle`), nie die Komponente.
+2. **Die Quelle bleibt stehen, leer und versteckt.** Verschiebe die Karten per `appendChild`,
+   statt sie per `innerHTML` neu zu schreiben — so behalten sie `data-sv-field`,
+   `data-sv-widget-entry` und einen laufenden Cursor (siehe 4.6). Rendert die Seite nach
+   (Vorschau, Editor), liegen die neuen Einträge wieder in der Quelle, und dein Aufbau läuft
+   erneut. Ist die Quelle leer, ist er fertig — damit ist er idempotent.
+3. **Ein `MutationObserver` dreht sich sonst im Kreis.** Jeder Aufbauschritt schreibt in den
+   Baum, den der Beobachter überwacht. Drei Riegel: Der Beobachter ignoriert die Bereiche, die
+   du selbst erzeugst (Filterleiste, Tabs). Jede Aufbaufunktion vergleicht eine **Signatur** und
+   tut nichts, wenn sie gleich ist. Und die Signatur kennt **Identität, nicht nur Form**: Drei
+   Workshop-Räume mit denselben Uhrzeiten sehen für „Uhrzeit + sichtbar" gleich aus, der
+   Wechsel zwischen ihnen gälte als „nichts geändert". Vergib deshalb jedem Knoten eine laufende
+   Nummer — als JavaScript-Eigenschaft, nicht als Attribut, sonst ist das Setzen selbst wieder
+   ein Schreibvorgang im beobachteten Baum — und vergleiche sortiert:
+
+   ```js
+   var svNr = 0;
+   function signatur(karten) {
+     karten.forEach(function (k) {
+       if (k._svNr == null) k._svNr = ++svNr;
+     });
+     return karten
+       .map(function (k) {
+         return k._svNr + (k.hidden ? '-' : '+');
+       })
+       .sort()
+       .join('|');
+   }
+   ```
+
+   Sortiert macht sie unabhängig von der Reihenfolge (dein Raster sortiert um), die Nummer
+   macht sie identitätsbewusst. Beides zusammen, nicht eins davon.
+
+4. **Räume Inline-Stile mit auf.** Setzt dein Raster `grid-column` am Knoten und fällt das
+   Raster weg (nach dem Filtern ist nur eine Spalte übrig), bleibt der Stil stehen, und die
+   Karten rutschen in Spalten, die es nicht mehr gibt. Wer das Raster abbaut, entfernt auch die
+   Inline-Stile. Und: CSS-Grid füllt in Dokumentreihenfolge und geht nie zurück — bring die
+   Karten **vor** dem Platzieren in Spaltenreihenfolge.
+
+**Testen ohne Browser.** Mit `linkedom` (liegt schon in `node_modules`, die Runtime nutzt es
+selbst) lädst du das server-gerenderte HTML in ein DOM, führst dein echtes Script darin aus
+und taktest den `MutationObserver` von Hand. Zwei Regeln machen diese Tests etwas wert:
+
+- **Gegen echte Kundendaten testen, nicht nur gegen Mock.** Rendere einmal mit den Mock-Daten
+  und einmal mit `VIBE_DATA_SOURCE=api` gegen das echte Event (siehe README). Ein Spaltenlayout,
+  das im Mock stimmt, kann live falsch sein, weil die Spalten dort aus einem anderen Feld
+  kommen (Tabs statt Räume).
+- **Eine Prüfung, die ohne den Fix nicht rot wird, prüft nichts.** Nimm den Fix testweise
+  heraus und sieh zu, wie der Test fehlschlägt. Erst dann zählt er.
+
 ## 11. Dev & Preview
 
 ### 11.1 Lokaler Start
@@ -1689,6 +1935,10 @@ Publish ebenfalls geprüft wird. **Muss grün sein, bevor du die ZIP abgibst.**
 In `mock-data/` liegen Beispiel-Datensätze (Speaker, Agenda, Sponsoren, Event). Du darfst sie
 erweitern, um dein Layout mit realistischen Mengen zu testen (viele Speaker, lange Titel, fehlende
 optionale Felder). Die Feldnamen entsprechen exakt [Kap. 5](#5-dynamische-daten--die-sv-komponenten).
+
+Die Mock-Agenda enthält absichtlich **drei Tabs am selben Datum** (Hauptprogramm und zwei
+Workshops mit gemeinsamer Kaffeepause). So siehst du schon lokal, wie `group="day"` sie zu
+einem Tag mit drei Spuren zusammenlegt — der Fall, an dem fest verdrahtete Tage scheitern.
 
 > **Deine eigenen Collections stehen nicht hier.** Ihre Startdaten gehören ins Bundle
 > (`src/collections/*.json`, siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)) —
@@ -1770,6 +2020,8 @@ Die harten Regeln auf einer Seite.
 - **Keine Asset-Dateien im Root** (außer `favicon.ico`, `robots.txt`, `sitemap.xml`).
 - **Kein Preis-Teaser** mit erfundenen Ticketpreisen — auf `/shop` verlinken.
 - **Keine Schlüssel** ohne Not umbenennen (verwaist Kundeninhalte).
+- **Keine Tage hart codieren** (`<sv-agenda day="1">`, `day="2"` …) — `day` ist ein Tab-Index.
+  Ein Programm über mehrere Tage ist **eine** `<sv-agenda group="day">` ([5.3](#53-komponenten-katalog)).
 
 ## 14. Referenz / Cheat-Sheet
 
@@ -1789,6 +2041,7 @@ Die harten Regeln auf einer Seite.
 | `link`           | nur `href`                    | `href`-Attribut     |
 | `cta`            | Label + `href`                | Text + `href`       |
 | `image`          | Bild + Alt-Text               | siehe `<sv-image>`  |
+| `video`          | Videodatei + Vorschaubild     | siehe `<sv-video>`  |
 
 ### Binding- & Steuer-Attribute (in `<sv-*>`)
 
@@ -1809,19 +2062,21 @@ Die harten Regeln auf einer Seite.
 
 ### Komponenten
 
-| Komponente                 | Liefert               | Wichtige Felder                                                                                                                                                            |
-| -------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`, `featured`, `category`                                                              |
-| `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`, `highlight`, `stageColor`, `typeColor`, `categoryColor` |
-| `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                                             |
-| `<sv-sponsors>`            | Liste                 | `name`, `logoUrl`, `bannerUrl`, `description`, `website`, `websiteLabel`, `documents[]`                                                                                    |
-| `<sv-event>`               | Einzelobjekt          | `name`, `description`, `startDate`, `endDate`, `timezone`, `location`, `organizer`, `url`, `category`, `tags[]`, `type` (kein `image`/`logo`)                              |
-| `<sv-events>`              | Liste                 | `name`, `description`, `location`, `organizer`, `type`, `category`, `tags[]`, `duration`, `image`, `url`, `eventDateTime.*`                                                |
-| `<sv-image field>`         | editierbares Bild     | Attribute: `field`, `default`, `sizes`, `loading`, `alt`                                                                                                                   |
-| `<sv-gallery field>`       | editierbare Galerie   | Item: `image`, `alt`, `caption`                                                                                                                                            |
-| `<sv-capacity>`            | Status (Einzelobjekt) | `atCapacity`, `waitlistEnabled`                                                                                                                                            |
-| `<sv-langswitch>`          | Sprachlinks           | `code`, `label`, `url`, `isCurrent`                                                                                                                                        |
-| `<sv-collection name>`     | Liste (eigene Daten)  | die im Manifest deklarierten Felder + `slug`, `url` — siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)                                                     |
+| Komponente                 | Liefert               | Wichtige Felder                                                                                                                                                                                                       |
+| -------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`, `featured`, `category`                                                                                                         |
+| `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`, `highlight`, `stageColor`, `typeColor`, `categoryColor`, `dayName`, `dayDate`, `dayIndex`, `dayId` |
+| `<sv-agenda group="day">`  | Liste (Tage)          | `dayName`, `dayDate`, `dayNumber`, `entries[]`, `tracks[]` (`name`, `entries[]`), `hasTracks`, `stages[]`                                                                                                             |
+| `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                                                                                        |
+| `<sv-sponsors>`            | Liste                 | `name`, `logoUrl`, `bannerUrl`, `description`, `website`, `websiteLabel`, `documents[]`, `slug`, `url`                                                                                                                |
+| `<sv-event>`               | Einzelobjekt          | `name`, `description`, `startDate`, `endDate`, `timezone`, `location`, `organizer`, `url`, `category`, `tags[]`, `type` (kein `image`/`logo`)                                                                         |
+| `<sv-events>`              | Liste                 | `name`, `description`, `location`, `organizer`, `type`, `category`, `tags[]`, `duration`, `image`, `url`, `eventDateTime.*`                                                                                           |
+| `<sv-image field>`         | editierbares Bild     | Attribute: `field`, `default`, `sizes`, `loading`, `alt`                                                                                                                                                              |
+| `<sv-video field>`         | editierbares Video    | Attribute: `field`, `default`, `poster` (+ `autoplay`, `muted`, `loop`, `playsinline`, `preload` … durchgereicht)                                                                                                     |
+| `<sv-gallery field>`       | editierbare Galerie   | Item: `image`, `alt`, `caption`                                                                                                                                                                                       |
+| `<sv-capacity>`            | Status (Einzelobjekt) | `atCapacity`, `waitlistEnabled`                                                                                                                                                                                       |
+| `<sv-langswitch>`          | Sprachlinks           | `code`, `label`, `url`, `isCurrent`                                                                                                                                                                                   |
+| `<sv-collection name>`     | Liste (eigene Daten)  | die im Manifest deklarierten Felder + `slug`, `url` — siehe [4.9](#49-custom-collections--wiederkehrende-datenobjekte)                                                                                                |
 
 ### Reservierte Routen (nur verlinken, keine eigenen Seiten)
 

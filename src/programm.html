@@ -52,75 +52,62 @@
           Details.
         </p>
 
-        <h2 style="margin-top: 48px">Tag 1</h2>
         <!--
+          EINE <sv-agenda> für das ganze Programm: group="day" baut die Tage aus den Daten.
+          Tabs mit demselben Datum (parallele Workshops) werden EIN Tag, jeder Tab bleibt als
+          Spur in `tracks` erhalten. Nie day="1|2|3" hart verdrahten — `day` ist ein Tab-Index
+          und verliert still jeden Tab, den das Markup nicht kennt.
+
           data-bind-attr legt die ROHWERTE zusätzlich ins DOM. `data-bind` schreibt
           anzeigefertig ("11:00"), daraus kann eigenes JS keine Position berechnen — eine
           Timetable braucht den Instant. Beides auf demselben Element ist erlaubt.
         -->
-        <sv-agenda day="1">
+        <sv-agenda group="day">
           <template>
-            <div
-              class="slot"
-              data-bind-attr="data-start:date, data-end:dateEnd, data-stage:stage"
-            >
-              <time data-bind="date" data-format="time"></time>
-              <div>
-                <h4>
-                  <a data-bind="url"><span data-bind="topic"></span></a>
-                </h4>
-                <div class="meta">
-                  <span data-bind="stage"></span> ·
-                  <span data-bind="type" data-join=", "></span>
-                </div>
-                <sv-each field="speakers">
-                  <template>
-                    <span class="spk"
-                      ><img data-bind="image" alt="" /><span
-                        data-bind="name"
-                      ></span
-                    ></span>
-                  </template>
+            <section class="agenda-day" data-bind-attr="data-day:dayDate">
+              <h2>
+                Tag <span data-bind="dayNumber"></span
+                ><span data-sv-show="dayDate">
+                  · <span data-bind="dayDate" data-format="date"></span
+                ></span>
+              </h2>
+              <p class="agenda-tracks" data-sv-show="hasTracks">
+                Parallel:
+                <sv-each field="tracks">
+                  <template
+                    ><span class="track" data-bind="name"></span
+                  ></template>
                 </sv-each>
-              </div>
-            </div>
-          </template>
-          <template slot="empty"><p>Programm folgt.</p></template>
-        </sv-agenda>
-
-        <h2 style="margin-top: 48px">Tag 2</h2>
-        <sv-agenda day="2">
-          <template>
-            <div class="slot">
-              <time data-bind="date" data-format="time"></time>
-              <div>
-                <h4>
-                  <a data-bind="url"><span data-bind="topic"></span></a>
-                </h4>
-                <div class="meta">
-                  <span data-bind="stage"></span> ·
-                  <span data-bind="type" data-join=", "></span>
-                </div>
-              </div>
-            </div>
-          </template>
-          <template slot="empty"><p>Programm folgt.</p></template>
-        </sv-agenda>
-        <h2 style="margin-top: 48px">Tag 3</h2>
-        <sv-agenda day="3">
-          <template>
-            <div class="slot">
-              <time data-bind="date" data-format="time"></time>
-              <div>
-                <h4>
-                  <a data-bind="url"><span data-bind="topic"></span></a>
-                </h4>
-                <div class="meta">
-                  <span data-bind="stage"></span> ·
-                  <span data-bind="type" data-join=", "></span>
-                </div>
-              </div>
-            </div>
+              </p>
+              <sv-each field="entries">
+                <template>
+                  <div
+                    class="slot"
+                    data-bind-attr="data-start:date, data-end:dateEnd, data-stage:stage, data-track:dayName"
+                  >
+                    <time data-bind="date" data-format="time"></time>
+                    <div>
+                      <h4>
+                        <a data-bind="url"><span data-bind="topic"></span></a>
+                      </h4>
+                      <div class="meta">
+                        <span data-bind="stage"></span> ·
+                        <span data-bind="type" data-join=", "></span>
+                      </div>
+                      <sv-each field="speakers">
+                        <template>
+                          <span class="spk"
+                            ><img data-bind="image" alt="" /><span
+                              data-bind="name"
+                            ></span
+                          ></span>
+                        </template>
+                      </sv-each>
+                    </div>
+                  </div>
+                </template>
+              </sv-each>
+            </section>
           </template>
           <template slot="empty"><p>Programm folgt.</p></template>
         </sv-agenda>

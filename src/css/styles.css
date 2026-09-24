@@ -178,6 +178,15 @@ section {
   gap: 14px;
   flex-wrap: wrap;
 }
+.hero-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-top: 48px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
 
 /* Event facts */
 .facts {
@@ -310,6 +319,16 @@ section {
 }
 
 /* Agenda */
+.agenda-day h2 {
+  margin-top: 48px;
+}
+.agenda-tracks {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.agenda-tracks .track + .track::before {
+  content: " · ";
+}
 .slot {
   display: grid;
   grid-template-columns: 120px 1fr;
