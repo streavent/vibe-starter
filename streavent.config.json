@@ -122,6 +122,30 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "name": "ctas",
+      "label": "Aktionsbanner",
+      "itemLabel": "title",
+      "defaults": "collections/ctas.json",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Überschrift",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "text"
+        },
+        {
+          "key": "button",
+          "label": "Button",
+          "type": "cta"
+        }
+      ]
     }
   ],
   "dynamicPages": [

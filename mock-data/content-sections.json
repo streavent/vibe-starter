@@ -1,0 +1,5 @@
+{
+  "_comment": "Optional: Sichtbarkeit der data-sv-section-Abschnitte pro Sprache (true = ausgeblendet, false = eingeblendet). Fehlender Schlüssel = Designer-Default (data-sv-hidden). Setz \"call-for-papers\": false, um den ausgeblendeten Abschnitt in sv dev zu sehen.",
+  "de": {},
+  "en": {}
+}

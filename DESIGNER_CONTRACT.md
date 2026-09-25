@@ -428,8 +428,8 @@ Ab dann kann der Kunde ihn inline überschreiben. Du musst nichts in eine separa
 | ---------------- | -------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `text` (Default) | Überschriften, kurze Texte | Reiner Text (eine/mehrere Zeilen)                           | Textinhalt des Elements                                                   |
 | `richtext`       | Fließtext mit Formatierung | Text + begrenzte Formatierung (fett, kursiv, Links, Listen) | innerer HTML-Inhalt                                                       |
-| `link`           | Logo-/Icon-Link            | Nur das Ziel (`href`), Text bleibt wie gestaltet            | `href`-Attribut                                                           |
-| `cta`            | Buttons / Call-to-Action   | Label **und** Ziel (`href`)                                 | Text + `href`                                                             |
+| `link`           | Logo-/Icon-Link            | Nur das Ziel (`href`, optional `download`), Text bleibt     | `href`-Attribut                                                           |
+| `cta`            | Buttons / Call-to-Action   | Label **und** Ziel (`href`, optional `download`)            | Text + `href`                                                             |
 | `image`          | Austauschbares Bild        | Bild hochladen/zuschneiden + Alt-Text                       | siehe [Kap. 6](#6-bilder--assets)                                         |
 | `video`          | Austauschbares Video       | Videodatei + Vorschaubild ersetzen (`{ src, poster }`)      | `src`/`poster` am `<video>`, siehe [6.7](#67-editierbare-videos-sv-video) |
 
@@ -449,21 +449,28 @@ Ab dann kann der Kunde ihn inline überschreiben. Du musst nichts in eine separa
 <a data-sv-field="footer.imprint" data-sv-type="link" href="https://example.com/impressum">Impressum</a>
 ```
 
+**Gespeicherter Wert von `link`/`cta`:** `{ label?, href?, download? }`. Das Ziel kann eine
+Web-Adresse, `mailto:`, `tel:` oder eine hochgeladene Datei sein (siehe „Links" in 4.6).
+`download: true` rendert das `download`-Attribut (der Besucher lädt die Datei herunter),
+`download: false` entfernt ein von dir gesetztes, fehlt es, bleibt dein Markup, wie es ist.
+
 > **`richtext` ist bewusst begrenzt.** Beim Speichern läuft der Wert durch eine feste
 > Allowlist — alles andere wird verworfen:
 >
-> | Erlaubt                                                            | Verworfen                                       |
-> | ------------------------------------------------------------------ | ----------------------------------------------- |
-> | `b` `strong` `i` `em` `u` `a` `p` `br` `ul` `ol` `li` `span`       | jedes andere Tag (`div`, `h2`, `img`, `table`…) |
-> | `class` auf allen davon                                            | `style`, `id`, `on*`, alle sonstigen Attribute  |
-> | `href`/`target`/`rel` auf `a`; Schemata `http(s)`, `mailto`, `tel` | `javascript:`, `data:`, `vbscript:`             |
+> | Erlaubt                                                                       | Verworfen                                       |
+> | ----------------------------------------------------------------------------- | ----------------------------------------------- |
+> | `b` `strong` `i` `em` `u` `a` `p` `br` `ul` `ol` `li` `span`                  | jedes andere Tag (`div`, `h2`, `img`, `table`…) |
+> | `class` auf allen davon                                                       | `style`, `id`, `on*`, alle sonstigen Attribute  |
+> | `href`/`target`/`rel`/`download` auf `a`; Schemata `http(s)`, `mailto`, `tel` | `javascript:`, `data:`, `vbscript:`             |
 >
 > `span` + `class` sind ausdrücklich drin, damit deine Inline-Auszeichnung
 > (`<span class="grad">`) eine Kundenbearbeitung überlebt. `style` bleibt draußen.
 >
-> **Im Editor gibt es aktuell keine Formatierungs-Leiste.** Der Kunde bearbeitet direkt im
-> Text; fett/kursiv gehen über die Browser-Kürzel (⌘/Strg + B, I, U). Der praktische Nutzen von
-> `richtext` ist deshalb heute vor allem: **das vorhandene Markup bleibt erhalten**.
+> **Formatieren im Editor:** Solange ein `richtext`-Feld den Cursor hat, zeigt der Editor darüber
+> eine kleine Leiste mit **fett**, _kursiv_, Aufzählung und Link (dazu die Schriftgröße, siehe
+> 4.6). Überschriften gibt es dort bewusst nicht — die Hierarchie der Seite ist dein Markup. Die
+> Leiste erzeugt nur Tags aus der Allowlist oben (`b`, `i`, `ul`/`li`, `a`); ⌘/Strg + B, I, U
+> gehen weiterhin.
 
 > ⚠️ **Enthält das Element Inline-Markup, nimm `richtext` — nicht `text`.** `text` wird als
 > reiner Text bearbeitet und gespeichert, d. h. beim ersten Speichern verschwindet jedes
@@ -491,8 +498,8 @@ footer.copyright
 
 ### 4.5 Was beim Publish passiert (und wer gewinnt)
 
-1. **Erstes Publish:** Streavent liest alle `data-sv-field`-Defaults aus deinem Markup und legt
-   sie als Startwerte im Content-Store ab.
+1. **Erstes Publish:** Der Content-Store ist leer. Jedes Feld zeigt seinen Markup-Default, solange
+   kein Wert gespeichert ist — Defaults werden nicht kopiert, sie bleiben in deinem Markup.
 2. **Kunde editiert:** Der überschriebene Wert landet im Content-Store.
 3. **Du lieferst ein Update (neue ZIP):** Solange ein Feld-Schlüssel **gleich bleibt**, behält
    der Content-Store den Wert des Kunden — **der editierte Wert gewinnt** über den neuen Markup-
@@ -510,13 +517,60 @@ footer.copyright
   Markierung lebt ausschließlich in `outline`, Cursor und Chips. Ein runder Button bleibt
   im Editor rund, ein Button behält seine Farbe – was du im Edit-Modus siehst, ist dein CSS.
 - Speichern → Wert im Content-Store → Seite wird neu gerendert.
+- **Leere Felder bleiben greifbar.** Löscht der Kunde einen Text komplett, zeigt der Editor an
+  seiner Stelle einen blassen Platzhalter („Leer – zum Bearbeiten klicken"). Das ist die eine
+  bewusste Ausnahme von „der Editor fasst keine Boxen an": ein leeres Inline-Element hat keine
+  Breite, ohne Platzhalter wäre das Feld nicht mehr anklickbar. Der Platzhalter ist ein
+  `::before`-Inhalt nur im Edit-Modus; `display`, Box-Eigenschaften und gefüllte Felder bleiben
+  unberührt; ein leeres Element bekommt nur durch den Platzhalter eine Ausdehnung. Auf der
+  Live-Seite gibt es ihn nicht.
+- **„Original wiederherstellen".** Jedes Feld, für das in der aktuellen Sprache ein Wert oder
+  eine Schriftgröße gespeichert ist, lässt sich zurücksetzen: Bilder, Videos, Links und Buttons
+  über einen Chip „↺ Original wiederherstellen" beim Hovern, Text und Richtext über denselben
+  Knopf in der Formatierungs-Leiste. Ein Klick löscht Wert **und** Schriftgröße, und dein
+  Markup-Default greift wieder. Deshalb ist der Default im Markup nie nur Platzhalter — er ist
+  der Stand, zu dem der Kunde zurückkehren kann.
+- **Formatierungs-Leiste.** Hat ein `text`- oder `richtext`-Feld den Cursor, erscheint darüber
+  eine kleine Leiste (neben dem Feld, nie im Layout-Fluss):
+  - `richtext`: **fett**, _kursiv_, Aufzählung, Link.
+  - `text` und `richtext`: Schriftgröße `A−  16px  A+` in 1-px-Schritten, 8–200 px. Startwert ist
+    die Größe, die dein CSS gerade berechnet.
+  - „↺ Original wiederherstellen", sobald das Feld einen gespeicherten Wert oder eine Größe hat.
+  - Bild-, Video-, Link- und Button-Felder bekommen keine Leiste; Collection-Einträge auf einer
+    Detailseite (Eintrags-Modus) auch nicht — eine Schriftgröße gehört zum Feld-Schlüssel, und
+    ein Eintragsfeld hat keinen.
+- **Die Schriftgröße gilt für das ganze Feld, in absoluten px, auf jedem Viewport.** Sie wird
+  beim Rendern als `font-size:<n>px` in das `style`-Attribut des Elements geschrieben (eine
+  vorhandene `font-size`-Angabe dort wird ersetzt, alles andere bleibt) — damit schlägt sie
+  auch deine Media Queries. Eine Headline, die auf dem Desktop mit 64 px gut aussieht, ist auf
+  dem Smartphone ebenfalls 64 px. Der Kunde kann das im Editor mit dem Viewport-Schalter
+  (Desktop/Smartphone) prüfen; der Wert selbst ist eine Zahl, kein CSS aus dem Browser.
+- **`data-sv-lock="style"`** am Feld nimmt es aus der Formatierung heraus: keine Leiste, keine
+  Schriftgröße, nur der Zurücksetzen-Knopf bleibt. In `richtext` gehen fett, kursiv und
+  unterstrichen weiter über ⌘/Strg + B, I, U; einen Link kann der Kunde dort nicht setzen. Nimm es für Felder, deren Größe dein Layout trägt (Hero-Claim
+  mit `clamp()`, Zahlen in Kacheln). Dokumentiert, vom Validator nicht geprüft.
+- **Schriftgröße und Sprachen.** Die Größe wird wie der Text pro Sprache gespeichert und fällt
+  auf die Standardsprache zurück (7.4). Eine Größe, die eine Zweitsprache nur von der
+  Standardsprache erbt, wird deshalb in der **Standardsprache** zurückgesetzt.
+- **Links.** Das Link-Formular (für `link`/`cta` und für den Link-Knopf in `richtext`) hat vier
+  Reiter: **URL** (`https://…` oder ein Pfad der Seite), **E-Mail** (wird zu `mailto:`),
+  **Telefon** (wird zu `tel:`, Leerzeichen entfernt) und **Datei** (Upload über die
+  Team-Mediathek — PDF, Office-Dateien, CSV, TXT, ZIP; der Link bekommt `download`). In
+  `richtext` markiert der Kunde Text und setzt den Link darauf, oder er setzt den Cursor in
+  einen vorhandenen Link und ändert ihn oder entfernt ihn. Klicks auf Links navigieren im
+  Editor nie, sie setzen nur den Cursor.
 
-| Der Kunde **kann**                  | Der Kunde **kann nicht**                     |
-| ----------------------------------- | -------------------------------------------- |
-| Markierte Texte ändern              | Sections hinzufügen/verschieben/löschen      |
-| Bilder und Videos austauschen       | Layout/Design ändern                         |
-| Link-Ziele & Button-Labels anpassen | Etwas editieren, das **nicht** markiert ist  |
-| Galerie-Bilder verwalten            | Speaker-/Agenda-/Partner-Inhalte hier ändern |
+| Der Kunde **kann**                                                                                           | Der Kunde **kann nicht**                        |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Markierte Texte ändern                                                                                       | Feste Sections hinzufügen/verschieben/löschen   |
+| Bilder und Videos austauschen                                                                                | Layout/Design ändern                            |
+| Link-Ziele & Button-Labels anpassen — Web-Adresse, E-Mail, Telefon oder Datei-Download                       | Etwas editieren, das **nicht** markiert ist     |
+| Galerie-Bilder verwalten                                                                                     | Speaker-/Agenda-/Partner-Inhalte hier ändern    |
+| Felder auf deinen Default zurücksetzen                                                                       | Überschriften-Ebenen oder neue Elemente anlegen |
+| Richtext formatieren: fett, kursiv, Aufzählung, Links                                                        | `data-sv-lock="style"`-Felder formatieren       |
+| Die Schriftgröße eines Text-/Richtext-Felds ändern (feldweit, px)                                            |                                                 |
+| Mit `data-sv-section` markierte Abschnitte aus- und einblenden ([4.10](#410-abschnitte-aus--und-einblenden)) |                                                 |
+| Sections hinzufügen, die du als Collection vorsiehst ([4.11](#411-sections-die-der-kunde-selbst-hinzufügt))  |                                                 |
 
 #### Was mit `<sv-*>`-Komponenten passiert
 
@@ -631,6 +685,9 @@ out.querySelector('.head-slot').append(headOf(day)); // derselbe Knoten, neuer P
   ist, macht die Zahl zu Struktur, die nur du noch anfassen kannst.
 - ⛔ Nicht markieren: reine **Icons und Zierzeichen** (`×`, `●`, `✓`) und alles, was dein
   eigenes JavaScript ohnehin überschreibt.
+- 🔒 Trägt die Schriftgröße eines Felds dein Layout (ein Hero-Claim mit `clamp()`, eine Zahl
+  in einer festen Kachel), setz `data-sv-lock="style"`: der Text bleibt editierbar, die Größe
+  nicht. Ohne Sperre darf der Kunde sie feldweit in px setzen — auf allen Viewports gleich (4.6).
 - 📐 Wenn ein Feld eng ist, ist die Antwort **Platz im Design**, nicht ein fehlendes Feld:
   `min-width`, Umbruch erlauben, `text-wrap: balance`. Ein Badge, das bei zwei Wörtern mehr
   bricht, ist ein Layoutfehler — kein Grund, dem Kunden seinen eigenen Text wegzunehmen.
@@ -835,6 +892,81 @@ Datensatz:
   tragen. Erst im CMS leeren, dann hochladen — es gibt bewusst keinen Erzwingen-Schalter.
 - **Farben gehören nicht in `style`.** `data-bind-attr` darf `style` nicht schreiben; reiche die
   Farbe als `data-*`-Attribut durch und setze sie mit drei Zeilen eigenem JS (siehe 5.2.1).
+
+### 4.10 Abschnitte aus- und einblenden
+
+Manche Blöcke gehören zu einer Phase: der Call for Papers vor dem Event, der Countdown bis zum
+Einlass, das „Danke fürs Kommen" danach. Der Kunde soll sie ein- und ausschalten können, ohne
+dich zu fragen — aber nur die, die **du** dafür vorsiehst.
+
+```html
+<section data-sv-section="countdown">…</section>
+
+<!-- Designer-Default „ausgeblendet": erscheint erst, wenn der Kunde ihn einblendet -->
+<section data-sv-section="call-for-papers" data-sv-hidden>…</section>
+```
+
+- **`data-sv-section="key"`** markiert einen Block als ausblendbar. Der Schlüssel folgt dem
+  Muster `^[a-z0-9][a-z0-9._-]*$` (Kleinbuchstaben, Ziffern, `.`, `_`, `-`) und ist pro Seite
+  eindeutig — gleicher Schlüssel auf mehreren Seiten heißt: ein Schalter für alle.
+- **`data-sv-hidden`** (ohne Wert) ist dein Default: Der Block startet ausgeblendet. Ohne das
+  Attribut startet er sichtbar.
+- **Was der Kunde sieht:** Im Edit-Modus bekommt jeder markierte Block beim Hovern einen Chip
+  „Ausblenden" bzw. „Einblenden". Ausgeblendete Blöcke bleiben im Editor stehen — gedimmt und
+  gestrichelt umrahmt, das Layout ändert sich nicht —, damit der Kunde sie wiederfindet.
+- **Auf der Live-Seite** ist ein ausgeblendeter Block **nicht im HTML** — kein `display:none`,
+  seine Bilder und Komponenten werden gar nicht erst ausgeliefert. Sichtbare Blöcke verlieren
+  beim Rendern die Marker.
+- **Global, nicht pro Sprache.** Aus Kundensicht ist die Sichtbarkeit eine Entscheidung für die
+  ganze Site; der Editor speichert sie für alle Sprachen gleichzeitig.
+- **Die Wahl des Kunden schlägt deinen Default** — in beide Richtungen. Lieferst du ein Update mit
+  geändertem `data-sv-hidden`, gilt das nur, solange der Kunde den Block nie umgeschaltet hat.
+- **Nicht in `<template>`.** Ein Abschnitt in einem Collection-Template wäre ein Schalter für
+  alle Einträge zugleich — das meint nie jemand. Der Validator meldet das als Fehler (Regel
+  `section-key`), ebenso einen leeren oder ungültigen Schlüssel. `data-sv-hidden` ohne
+  `data-sv-section` wirkt nicht und ergibt eine Warnung.
+- `sv dev`: Überschreibungen testest du mit `mock-data/content-sections.json` (optional, gleiche
+  Form wie `content.json`: `{ "de": { "countdown": true } }`, `true` = ausgeblendet).
+
+> Merksatz: **Du entscheidest, was ausblendbar ist; der Kunde entscheidet, wann.**
+
+### 4.11 Sections, die der Kunde selbst hinzufügt
+
+Der Kunde kann keine freien Elemente einfügen — und das ist gewollt: Was nicht in deinem
+Design vorgesehen ist, sieht auch nicht nach deinem Design aus. Soll er trotzdem Blöcke
+**hinzufügen** können (ein zusätzliches Aktionsbanner, einen zweiten Countdown), baust du das
+mit dem, was es schon gibt: einer [Collection](#49-custom-collections--wiederkehrende-datenobjekte).
+
+Das Rezept:
+
+1. **Eine Collection pro Section-Typ** — `ctas` für Aktionsbanner, `countdowns` für Countdowns.
+   Das Schema im Manifest legt fest, welche Felder ein solcher Block hat.
+2. **`<sv-collection name="ctas">` genau dort platzieren, wo du Blöcke erlaubst** — zum Beispiel
+   zwischen Programm und Footer. Das Item-`<template>` enthält den kompletten Block,
+   `<section>` inklusive.
+3. **`<template slot="empty">` ist optional** — leer gelassen rendert die Stelle nichts, solange
+   der Kunde keinen Eintrag angelegt hat. Mit Inhalt ist es ein Platzhalter-Block.
+4. **`defaults`** darf `[]` sein: Dann erscheint der Block erst, wenn der Kunde einen anlegt.
+   Ein Beispiel-Eintrag hilft dir beim Gestalten in `sv dev`.
+5. **Der Kunde pflegt die Blöcke im Content-Tab:** anlegen, löschen, sortieren, Felder
+   bearbeiten. Im Edit-Modus führt ein Klick auf einen Block direkt zu seinem Eintrag.
+
+```html
+<sv-collection name="ctas">
+  <template>
+    <section class="cta-band">
+      <h2 data-bind="title"></h2>
+      <p data-bind="text"></p>
+      <a class="btn" data-bind-attr="href:button.href"><span data-bind="button.label"></span></a>
+    </section>
+  </template>
+  <template slot="empty"></template>
+</sv-collection>
+```
+
+Was **nicht** in einer Collection steht, bleibt Code: Feste Sections sind für den Kunden
+gesperrt — verschieben, löschen oder duplizieren kann er sie nicht. Ausblenden kann er sie nur,
+wenn du sie mit `data-sv-section` markierst ([4.10](#410-abschnitte-aus--und-einblenden)).
 
 ## 5. Dynamische Daten — die `<sv-*>`-Komponenten
 
@@ -1630,6 +1762,10 @@ tun — markieren genügt:
 - Die anderen Sprachen starten leer; der Kunde übersetzt sie im Editor (mit Sprach-Auswahl).
 - **Fallback:** Solange eine Sprache nicht übersetzt ist, wird der Wert der Standardsprache gezeigt
   — nie eine leere Seite.
+- **Zurücksetzen gilt je Sprache.** „Original wiederherstellen" (4.6) löscht den Wert der Sprache,
+  die gerade im Editor gewählt ist. Ein Wert, den eine Sprache nur von der Standardsprache erbt,
+  gehört der Standardsprache — er wird dort zurückgesetzt, in der zweiten Sprache gibt es für ihn
+  keinen Chip.
 
 > Wenn du Default-Texte für mehrere Sprachen schon im Bundle mitliefern willst, geht das über das
 > Manifest (Feld-Defaults pro Sprache) — Schema dazu folgt in einer späteren Doku-Version. Standard
@@ -2007,7 +2143,15 @@ Neue Version? **Neue ZIP rein droppen** — fertig. Wichtig:
 - Solange die `data-sv-field`-**Schlüssel gleich bleiben**, behält der Kunde seine inline
   gepflegten Inhalte (gespeicherter Wert gewinnt, siehe [Kap. 4.5](#45-was-beim-publish-passiert-und-wer-gewinnt)).
 - Benennst du Schlüssel um, verwaisen die zugehörigen Kundenwerte.
-- Frühere Versionen bleiben für **Rollback** erhalten.
+- Frühere Bundles bleiben bei Streavent erhalten (die letzten 20); ein **Rollback** auf ein
+  früheres Bundle macht Streavent auf Anfrage über die Admin-Seite der Website. Auch der Rollback
+  prüft die Collection-Schemas: würden gespeicherte Einträge ihre Felder verlieren, wird er
+  abgelehnt.
+- Der Kunde hat im Editor einen **Verlauf** seiner Inhalte: **Rückgängig/Wiederherstellen** in der
+  Kopfzeile und „**Zu diesem Stand zurück**" für jeden Eintrag der Liste (Textänderungen,
+  Listen, Schriftgrößen, ausgeblendete Sections, Veröffentlichungen, Bundle-Wechsel). Ein
+  Zurücksetzen landet im Entwurf — live geht es erst mit dem nächsten Veröffentlichen.
+  Rückgängig/Wiederherstellen gelten für alle Bearbeiter und Sitzungen.
 
 ## 13. Constraints & Do's / Don'ts
 
@@ -2023,6 +2167,9 @@ Die harten Regeln auf einer Seite.
 - Lege Assets in **Unterordner** (`/img`, `/css`, `/js`, `/fonts`).
 - Benenne Felder nach **`sektion.element`**; gleicher Schlüssel = gleicher Wert überall.
 - Sieh editierbaren Texten im Layout **genug Platz** für realistische Eingaben vor.
+- Markiere Phasen-Blöcke (Call for Papers, Countdown, Nachbericht) mit **`data-sv-section`**,
+  Blöcke, die erst später gebraucht werden, zusätzlich mit `data-sv-hidden` ([4.10](#410-abschnitte-aus--und-einblenden)).
+- Blöcke, die der Kunde **hinzufügen** soll, sind eine **Collection** ([4.11](#411-sections-die-der-kunde-selbst-hinzufügt)).
 
 ### ⛔ Don't
 
@@ -2052,10 +2199,33 @@ Die harten Regeln auf einer Seite.
 | ---------------- | ----------------------------- | ------------------- |
 | `text` (Default) | reiner Text                   | Textinhalt          |
 | `richtext`       | Text + begrenzte Formatierung | innerer HTML-Inhalt |
-| `link`           | nur `href`                    | `href`-Attribut     |
-| `cta`            | Label + `href`                | Text + `href`       |
+| `link`           | nur `href` (+ `download`)     | `href`-Attribut     |
+| `cta`            | Label + `href` (+ `download`) | Text + `href`       |
 | `image`          | Bild + Alt-Text               | siehe `<sv-image>`  |
 | `video`          | Videodatei + Vorschaubild     | siehe `<sv-video>`  |
+
+### Abschnitte & Sections
+
+| Syntax                                         | Zweck                                                                   |
+| ---------------------------------------------- | ----------------------------------------------------------------------- |
+| `data-sv-section="key"`                        | Block ist im Editor aus-/einblendbar; ausgeblendet = nicht im Live-HTML |
+| `data-sv-hidden`                               | Designer-Default „ausgeblendet" (nur zusammen mit `data-sv-section`)    |
+| `<sv-collection name="ctas">` + Block-Template | Sections, die der Kunde selbst anlegt, löscht und sortiert              |
+
+Schlüssel: `^[a-z0-9][a-z0-9._-]*$`, nicht innerhalb von `<template>`. Sichtbarkeit gilt für alle
+Sprachen.
+
+### Formatierung im Editor
+
+| Feld                   | Leiste im Editor                                                     |
+| ---------------------- | -------------------------------------------------------------------- |
+| `richtext`             | fett · kursiv · Aufzählung · Link · Schriftgröße (px) · Zurücksetzen |
+| `text`                 | Schriftgröße (px) · Zurücksetzen                                     |
+| `data-sv-lock="style"` | nur Zurücksetzen                                                     |
+| `link` / `cta`         | Formular: URL · E-Mail · Telefon · Datei (`download`)                |
+
+Schriftgröße: feldweit, 8–200 px, als `font-size` ins `style`-Attribut gerendert, auf jedem
+Viewport gleich.
 
 ### Binding- & Steuer-Attribute (in `<sv-*>`)
 

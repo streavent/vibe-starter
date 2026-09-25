@@ -81,6 +81,29 @@
       </div>
     </section>
 
+    <!--
+      PHASEN-BLOCK: data-sv-section macht den Abschnitt im Editor aus- und einblendbar
+      (Contract 4.10). data-sv-hidden = Designer-Default "ausgeblendet": der Call for Papers
+      bleibt unsichtbar, bis der Kunde ihn im Editor einblendet.
+    -->
+    <section class="bg-soft" data-sv-section="call-for-papers" data-sv-hidden>
+      <div class="container">
+        <div class="cta-band">
+          <h2 data-sv-field="cfp.title">Call for Papers ist offen</h2>
+          <p data-sv-field="cfp.text">
+            Reiche bis 31. Januar 2027 deinen Vortrag ein.
+          </p>
+          <a
+            href="https://example.com/cfp"
+            class="btn"
+            data-sv-field="cfp.cta"
+            data-sv-type="cta"
+            >Vortrag einreichen</a
+          >
+        </div>
+      </div>
+    </section>
+
     <!-- EVENT-FAKTEN: <sv-event> (Einzelobjekt) -->
     <section>
       <div class="container">
@@ -375,6 +398,28 @@
         </p>
       </div>
     </section>
+
+    <!--
+      AKTIONSBANNER: Sections, die der Kunde selbst hinzufügt (Contract 4.11). Eine Collection
+      pro Section-Typ, platziert dort, wo du sie erlaubst. Der Kunde legt Banner im Content-Tab
+      an, löscht und sortiert sie; ohne Eintrag rendert der leere Slot nichts.
+    -->
+    <sv-collection name="ctas">
+      <template>
+        <section>
+          <div class="container">
+            <div class="cta-band">
+              <h2 data-bind="title"></h2>
+              <p data-bind="text"></p>
+              <a class="btn" data-bind-attr="href:button.href"
+                ><span data-bind="button.label"></span
+              ></a>
+            </div>
+          </div>
+        </section>
+      </template>
+      <template slot="empty"></template>
+    </sv-collection>
 
     <!-- CTA + Verfügbarkeit: <sv-capacity> mit data-sv-show/hide -->
     <section>

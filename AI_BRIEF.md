@@ -48,8 +48,32 @@ Optional:
 ## Statische Inhalte: `data-sv-field`
 
 Schreib echten Inhalt direkt ins Markup und markiere ihn:
-`<h1 data-sv-field="hero.title">Willkommen</h1>`. Streavent extrahiert den Text beim ersten Publish
-als Default; der Kunde überschreibt ihn inline. Schlüssel feature-namespacen (`hero.title`).
+`<h1 data-sv-field="hero.title">Willkommen</h1>`. Der Markup-Text ist der Default (nichts wird
+kopiert, er gilt, solange kein Wert gespeichert ist); der Kunde überschreibt ihn inline. Schlüssel
+feature-namespacen (`hero.title`).
+
+Links und Buttons (`data-sv-type="link"` / `"cta"`) kann der Kunde auf eine URL, eine E-Mail-
+Adresse, eine Telefonnummer oder eine hochgeladene Datei zeigen lassen; eine Datei bekommt dabei
+automatisch das `download`-Attribut. Ein fester `download` in deinem Markup bleibt erhalten.
+
+Der Markup-Default ist der Stand, zu dem der Kunde per „Original wiederherstellen" zurückkehrt —
+schreib dort also echten, fertigen Inhalt, keinen Platzhalter.
+
+Der Kunde kann die Schriftgröße eines Text-/Richtext-Felds feldweit in px setzen (auf allen
+Viewports gleich); trägt die Größe dein Layout (Hero-Claim mit `clamp()`, Zahlen in Kacheln),
+setz `data-sv-lock="style"` am Feld — dann bleibt nur der Text editierbar.
+
+## Abschnitte aus- und einblenden: `data-sv-section`
+
+Blöcke, die der Kunde ein- und ausschalten können soll, markierst du mit
+`data-sv-section="key"` (Muster `^[a-z0-9][a-z0-9._-]*$`). **Phasen-Blöcke** (Call for Papers,
+Countdown, Nachbericht, Early-Bird) bekommen zusätzlich `data-sv-hidden`, wenn sie erst später
+gebraucht werden — dann starten sie ausgeblendet. Ausgeblendet heißt: nicht im Live-HTML. Die
+Sichtbarkeit gilt für alle Sprachen. **Nie innerhalb eines `<template>`** (Validator-Fehler).
+
+```html
+<section data-sv-section="call-for-papers" data-sv-hidden>…</section>
+```
 
 ## Dynamische Daten: `<sv-*>`-Komponenten
 
@@ -159,6 +183,15 @@ Zwei Regeln, die man sonst erst beim Publish merkt:
   `defaults` zurück. Gleiches gilt für `<sv-gallery>`.
 - **Ein Bundle-Update, das ein Feld entfernt, wird abgelehnt**, sobald Einträge dafür Inhalt
   tragen. Erst im CMS leeren, dann hochladen.
+
+### Sections, die der Kunde selbst hinzufügt
+
+Freie Elemente gibt es nicht. Soll der Kunde Blöcke **hinzufügen** können (Aktionsbanner,
+Countdowns), ist das **eine Collection pro Section-Typ** (`ctas`, `countdowns`): Schema im
+Manifest, `<sv-collection name="ctas">` genau an der Stelle, an der du Blöcke erlaubst, das
+Item-`<template>` enthält den ganzen Block, `<template slot="empty"></template>` rendert ohne
+Eintrag nichts. Der Kunde legt Blöcke im Content-Tab an, löscht und sortiert sie. Alles außerhalb
+von Collections ist fest und für den Kunden gesperrt.
 
 ## Harte Regeln
 
