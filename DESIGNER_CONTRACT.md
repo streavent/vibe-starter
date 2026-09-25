@@ -2147,11 +2147,10 @@ Neue Version? **Neue ZIP rein droppen** — fertig. Wichtig:
   früheres Bundle macht Streavent auf Anfrage über die Admin-Seite der Website. Auch der Rollback
   prüft die Collection-Schemas: würden gespeicherte Einträge ihre Felder verlieren, wird er
   abgelehnt.
-- Der Kunde hat im Editor einen **Verlauf** seiner Inhalte: **Rückgängig/Wiederherstellen** in der
-  Kopfzeile und „**Zu diesem Stand zurück**" für jeden Eintrag der Liste (Textänderungen,
-  Listen, Schriftgrößen, ausgeblendete Sections, Veröffentlichungen, Bundle-Wechsel). Ein
-  Zurücksetzen landet im Entwurf — live geht es erst mit dem nächsten Veröffentlichen.
-  Rückgängig/Wiederherstellen gelten für alle Bearbeiter und Sitzungen.
+- Der Kunde hat im Editor **Rückgängig/Wiederherstellen** in der Kopfzeile — für jede Änderung an
+  seinen Inhalten (Texte, Listen, Schriftgrößen, ausgeblendete Sections), über alle Bearbeiter und
+  Sitzungen hinweg. Ein Schritt landet im Entwurf — live geht es erst mit dem nächsten
+  Veröffentlichen.
 
 ## 13. Constraints & Do's / Don'ts
 
