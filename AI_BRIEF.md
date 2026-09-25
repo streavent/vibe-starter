@@ -163,7 +163,7 @@ Zwei Regeln, die man sonst erst beim Publish merkt:
 ## Harte Regeln
 
 - **Erfinde keine Tags/Felder.** Nur die oben gelisteten existieren — alles andere meldet der Validator.
-- Editierbare Bilder immer `<sv-image>`/`<sv-gallery>` (Responsive/Formate automatisch), Design-Assets als normales `<img>`.
+- Editierbare Bilder immer `<sv-image>`/`<sv-gallery>`, Design-Assets als normales `<img>`. Die Box eines editierbaren Bildes immer per CSS oder `width`/`height` sizen, nie natürliche Bildgröße: bei `<sv-image>` bestimmt die Box die Auflösung des Kunden-Uploads (doppelt, Retina), Galerie-Bilder behalten die Pixelgröße des ersetzten Bildes. Default-Assets in doppelter Box-Größe liefern.
 - Editierbare Videos (Datei, kein YouTube/Vimeo) als `<sv-video>`; der Kunde tauscht Video und Vorschaubild. Video-Links gehören in ein Collection-Feld `video` + Lightbox, Standard-Paar dort: `poster` (image) + `video` (video).
 - Keine eigene Seite mit reserviertem Routennamen.
 - Light DOM — dein CSS greift voll; style die `<sv-*>` ganz normal über Klassen/Selektoren.

@@ -1388,13 +1388,13 @@ und die **editierbaren Content-Bilder** des Kunden.
 
 > **Ist es Teil des Designs — oder ein Inhalt, der dem Kunden gehört?**
 
-|                            | Design-Asset                                                | Editierbares Content-Bild                              |
-| -------------------------- | ----------------------------------------------------------- | ------------------------------------------------------ |
-| **Beispiele**              | Hintergrundtexturen, dekorative Formen, Icons, Font-Dateien | Hero-Foto, Galerie-Bilder, austauschbare Teaser-Bilder |
-| **Wie eingebunden**        | normales `<img src="/img/…">`                               | `<sv-image field="…">`                                 |
-| **Wo gespeichert**         | in deinem Bundle (ZIP)                                      | im Streavent-CDN (Referenz im Content-Store)           |
-| **Editierbar vom Kunden**  | nein (nur via neuer ZIP)                                    | ja (inline)                                            |
-| **Responsive Optimierung** | dein Job                                                    | automatisch durch Streavent                            |
+|                           | Design-Asset                                                | Editierbares Content-Bild                                                                    |
+| ------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Beispiele**             | Hintergrundtexturen, dekorative Formen, Icons, Font-Dateien | Hero-Foto, Galerie-Bilder, austauschbare Teaser-Bilder                                       |
+| **Wie eingebunden**       | normales `<img src="/img/…">`                               | `<sv-image field="…">`                                                                       |
+| **Wo gespeichert**        | in deinem Bundle (ZIP)                                      | im Streavent-CDN (Referenz im Content-Store)                                                 |
+| **Editierbar vom Kunden** | nein (nur via neuer ZIP)                                    | ja (inline)                                                                                  |
+| **Größe & Optimierung**   | dein Job (komprimieren, `width`/`height`)                   | Box sizen ist dein Job (6.3); Zuschnitt und Auflösung des Kunden-Uploads übernimmt Streavent |
 
 ### 6.2 Design-Assets (deine eigenen Dateien)
 
@@ -1420,22 +1420,33 @@ Bundle); bis der Kunde etwas hochlädt, wird der Default gezeigt.
 
 **Attribute:**
 
-| Attribut  | Pflicht | Bedeutung                                                           |
-| --------- | ------- | ------------------------------------------------------------------- |
-| `field`   | ✅      | Content-Store-Schlüssel (wie `data-sv-field`)                       |
-| `default` | –       | Default-Bild aus deinem Bundle, bis der Kunde eines hochlädt        |
-| `sizes`   | –       | Responsive-Hinweis (z. B. `100vw`, `(min-width:800px) 50vw, 100vw`) |
-| `loading` | –       | `lazy` (Default) oder `eager` (für das Hero über dem Fold)          |
-| `alt`     | –       | Default-Alt-Text (der Kunde kann ihn beim Editieren anpassen)       |
+| Attribut  | Pflicht | Bedeutung                                                                  |
+| --------- | ------- | -------------------------------------------------------------------------- |
+| `field`   | ✅      | Content-Store-Schlüssel (wie `data-sv-field`)                              |
+| `default` | –       | Default-Bild aus deinem Bundle, bis der Kunde eines hochlädt               |
+| `sizes`   | –       | Wird ans `<img>` durchgereicht; ein `srcset` erzeugt Streavent heute nicht |
+| `loading` | –       | `lazy` (Default) oder `eager` (für das Hero über dem Fold)                 |
+| `alt`     | –       | Default-Alt-Text (der Kunde kann ihn beim Editieren anpassen)              |
 
-**Was Streavent automatisch macht:** rendert ein responsives `<picture>` mit mehreren Größen und
-modernen Formaten (WebP/AVIF), setzt `width`/`height` (kein Layout-Springen / kein CLS) und lazy-
-loadet alles unterhalb des Folds.
+**Was Streavent automatisch macht:** `<sv-image>` wird zu einem normalen `<img>` mit deinen
+Klassen und Attributen; die vom Kunden hochgeladene Bild-URL ersetzt den Default. Ein
+`srcset`/`<picture>` entsteht dabei nicht — wie groß das Bild gerendert wird, bestimmst du.
+
+**Größe der Box (Pflicht):** Die gerenderte Größe eines editierbaren Bildes darf **nie von der
+Pixelgröße der Datei abhängen**. Gib die Breite über CSS oder den Container vor (`height: auto`
+ist in Ordnung, die Höhe folgt dann dem festen Zuschnitt-Verhältnis) oder setze `width`/`height`
+als Attribute. Ein `<sv-image>` in natürlicher Größe ohne Constraint ist nicht erlaubt: der
+Kunden-Upload wird in doppelter Box-Auflösung gespeichert und würde dann doppelt so groß
+gerendert. Liefere auch dein **Default-Asset in doppelter Box-Größe** (Retina), sonst ist schon
+der Auslieferungszustand unscharf.
 
 **Editieren (Kunde):** Klick aufs Bild im Edit-Modus → Upload-/Zuschneide-Dialog → neues Bild +
-Alt-Text. Der Zuschnitt ist dabei **auf die Maße des ersetzten Bildes vorbelegt**, damit das
-neue Bild in denselben Platz passt, den du im Layout vorgesehen hast — du musst dafür nichts
-tun. Nur wenn sich das alte Bild nicht vermessen lässt, bleibt der Zuschnitt frei.
+Alt-Text. Der Zuschnitt ist dabei vorbelegt: die **Form** kommt vom ersetzten Bild (deine
+Proportionen), die **Auflösung** ist die doppelte Größe der Box im Layout (Retina, gemessen in
+der gerade gewählten Vorschau-Breite des Editors) und nie kleiner als das ersetzte Bild — beides
+bis zur Obergrenze von 2560 px auf der langen Kante. Galerie-Bilder (`<sv-gallery>`) werden
+weiterhin auf die Pixelgröße des ersetzten Bildes zugeschnitten. Du musst dafür nichts tun.
+Nur wenn sich das alte Bild nicht vermessen lässt, bleibt der Zuschnitt frei.
 
 > **Styling:** Du gibst dem `<sv-image>` (oder dem erzeugten `<img>`) ganz normal deine Klassen.
 > Es liegt im Light DOM, dein CSS greift voll.
@@ -1461,11 +1472,11 @@ Struktur-Operation, die der Kunde an Inhalten ausführen darf (sicher, weil es n
 
 **Item-Felder (im `<template>`):**
 
-| Feld       | Typ    | Bedeutung                                            |
-| ---------- | ------ | ---------------------------------------------------- |
-| `image`    | string | Bild-URL (bekommt automatisch responsive Behandlung) |
-| `alt?`     | string | Alt-Text                                             |
-| `caption?` | string | Bildunterschrift                                     |
+| Feld       | Typ    | Bedeutung                                          |
+| ---------- | ------ | -------------------------------------------------- |
+| `image`    | string | Bild-URL (bindest du selbst in deinem Item-Markup) |
+| `alt?`     | string | Alt-Text                                           |
+| `caption?` | string | Bildunterschrift                                   |
 
 **Editieren (Kunde):** Klick auf die Galerie im Edit-Modus → Dialog mit allen aktuellen
 Bildern: hinzufügen, entfernen, sortieren, Alt-Text/Bildunterschrift ändern. Ein Klick auf
@@ -1497,8 +1508,10 @@ vorhandenen. Layout und Markup bleiben deins.
 
 ### 6.6 Performance-Hinweise
 
-- Für editierbare Bilder **immer `<sv-image>`/`<sv-gallery>`** nutzen — dann sind Responsive-
-  Größen, Formate und Dimensionen automatisch korrekt.
+- Für editierbare Bilder **immer `<sv-image>`/`<sv-gallery>`** nutzen und die Box per CSS oder
+  `width`/`height` sizen — bei `<sv-image>` bestimmt die Box, in welcher Auflösung der
+  Kunden-Upload gespeichert wird (siehe 6.3); Galerie-Bilder behalten die Pixelgröße des
+  ersetzten Bildes.
 - Setze beim Hero `loading="eager"`, bei allem anderen bleibt `lazy` der Default.
 - Deine eigenen Design-Assets vorher komprimieren und mit `width`/`height` versehen.
 
@@ -2005,7 +2018,8 @@ Die harten Regeln auf einer Seite.
 - Schreib echten Inhalt **direkt ins Markup** — das ist der Default ([Kap. 4](#4-statische-inhalte--inline-editing)).
 - Markiere **Inhalt** (Texte, Bilder, Buttons) als editierbar, nichts Strukturelles/Dekoratives.
 - Gib jedem `<sv-*>` einen **`<template slot="empty">`** (Leerzustand).
-- Nutze für editierbare Bilder **`<sv-image>` / `<sv-gallery>`** (responsive automatisch).
+- Nutze für editierbare Bilder **`<sv-image>` / `<sv-gallery>`** und size die Box per CSS oder
+  `width`/`height` — nie natürliche Bildgröße.
 - Lege Assets in **Unterordner** (`/img`, `/css`, `/js`, `/fonts`).
 - Benenne Felder nach **`sektion.element`**; gleicher Schlüssel = gleicher Wert überall.
 - Sieh editierbaren Texten im Layout **genug Platz** für realistische Eingaben vor.
