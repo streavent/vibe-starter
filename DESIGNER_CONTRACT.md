@@ -94,6 +94,7 @@ my-event-site/
 ├── mock-data/               # Beispiel-Speaker/Agenda/Sponsoren für die lokale Vorschau
 ├── DESIGNER_CONTRACT.md     # dieses Dokument
 ├── AI_BRIEF.md              # Kurzfassung als KI-Kontext
+├── wiki/                    # Design-Wiki: was auf eine Event-Website gehört (Katalog, Beispiele)
 └── package.json
 ```
 

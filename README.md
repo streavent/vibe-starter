@@ -6,6 +6,10 @@ Es klont sich der Designer, um eine Custom-Event-Website zu vibe-coden. Die komp
 Sample selbst enthält nur deine Seite (`src/`), die Config und Mock-Daten.
 
 > Voller Contract: [`DESIGNER_CONTRACT.md`](DESIGNER_CONTRACT.md)
+>
+> Was auf eine Event-Website gehört (Seiten, Sections, Beispielstrukturen, Workshop-Fragen,
+> Go-Live-Checkliste): [`wiki/`](wiki/README.md). Der Contract sagt, _wie_ du baust, das Wiki,
+> _was_. Bei technischen Fragen gilt der Contract.
 
 ## Start
 
@@ -79,6 +83,7 @@ src/                     # ← hier baust du deine Seite (reines HTML/CSS/JS)
   css/  js/  img/        # deine Assets
 mock-data/               # Beispiel-Daten für die lokale Vorschau
 demo/embed-demo.html     # Embed-Demo (Custom Element im Browser, ohne Backend)
+wiki/                    # Design-Wiki: Katalog der Seiten und Sections, Beispiele, Checklisten
 ```
 
 > Die Dev-Runtime (Render, Validator, `sv`-CLI, Browser-Bundle) liegt **nicht** im Repo, sondern

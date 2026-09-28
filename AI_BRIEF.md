@@ -11,6 +11,18 @@ Du baust eine **Event-Website als reines HTML/CSS/JS** im Sample-Repo. Struktur 
 dir (frei, „vibe-coded"). Inhalte und Live-Daten bindest du über eine schmale Konvention an
 Streavent an. Du baust **kein** CMS und **keine** Build-Pipeline — nur die Seite.
 
+## Was gebaut wird: das Design-Wiki
+
+Dieser Brief sagt, **wie** du baust. **Was** auf die Seite gehört — Seitentypen, Sections,
+Beispielstrukturen, Workshop-Fragen, Go-Live-Checkliste — steht im [`wiki/`](./wiki/README.md).
+
+- **Nicht komplett laden** (100 Seiten). Lies `wiki/README.md` und von dort gezielt die Seiten, die
+  die aktuelle Aufgabe braucht: `wiki/seiten/<seite>.md`, `wiki/sections/<section>.md`.
+- Das Wiki ist ein **Katalog, keine Vorgabe**: Was gebaut wird, entscheidet der Designer aus den
+  Antworten des Kunden.
+- **Bei technischen Fragen gelten dieser Brief, der Contract und der Katalog.** Weicht das Wiki
+  davon ab, ist das Wiki veraltet.
+
 ## Die drei Schichten (das Kernprinzip)
 
 1. **Struktur/Layout = Code** — dein HTML/CSS/JS. Frei.
