@@ -1344,26 +1344,32 @@ genau ein Tab), `filter`, `exclude`, `sort`, `limit`
 
 **Eintrags-Felder:**
 
-| Feld            | Typ           | Bedeutung                                                                                  |
-| --------------- | ------------- | ------------------------------------------------------------------------------------------ |
-| `topic`         | string        | Titel der Session                                                                          |
-| `description?`  | string (HTML) | Beschreibung                                                                               |
-| `date`          | ISO-string    | Start (mit `data-format` formatieren)                                                      |
-| `dateEnd?`      | ISO-string    | Ende                                                                                       |
-| `timeText?`     | string        | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden)                                  |
-| `stage?`        | string        | Bühne/Raum                                                                                 |
-| `type?`         | string[]      | Typ-Tags (z. B. „Keynote")                                                                 |
-| `category?`     | string[]      | Kategorie-Tags                                                                             |
-| `headerImg?`    | string        | Header-Bild der Session                                                                    |
-| `speakers`      | array         | Speaker dieses Eintrags → mit `<sv-each>`                                                  |
-| `highlight`     | boolean       | Optische Hervorhebung, im CMS pro Eintrag setzbar (→ `data-sv-show`)                       |
-| `stageColor`    | string        | Farbe der Bühne aus den Event-Einstellungen (`''`, wenn keine hinterlegt)                  |
-| `typeColor`     | string        | Farbe des ersten passenden Typ-Tags                                                        |
-| `categoryColor` | string        | Farbe des ersten passenden Kategorie-Tags                                                  |
-| `dayName`       | string        | Name des Tabs, so wie der Veranstalter ihn getippt hat                                     |
-| `dayDate`       | string        | Datum des Tabs als `JJJJ-MM-TT` (`''`, wenn der Tab keins hat) → `data-format`             |
-| `dayIndex`      | number        | Position des **Tabs**, `1`-basiert (genau das, was `day="N"` auswählt) — keine Tagesnummer |
-| `dayId`         | string        | Stabile Id des Tabs — ändert sich nicht, wenn der Tab umbenannt oder verschoben wird       |
+| Feld            | Typ        | Bedeutung                                                                                  |
+| --------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| `topic`         | string     | Titel der Session                                                                          |
+| `description?`  | string     | Beschreibung als **Klartext** (siehe Hinweis unter der Tabelle)                            |
+| `date`          | ISO-string | Start (mit `data-format` formatieren)                                                      |
+| `dateEnd?`      | ISO-string | Ende                                                                                       |
+| `timeText?`     | string     | Text-Zeitangabe (wenn keine echten Zeiten genutzt werden)                                  |
+| `stage?`        | string     | Bühne/Raum                                                                                 |
+| `type?`         | string[]   | Typ-Tags (z. B. „Keynote")                                                                 |
+| `category?`     | string[]   | Kategorie-Tags                                                                             |
+| `headerImg?`    | string     | Header-Bild der Session                                                                    |
+| `speakers`      | array      | Speaker dieses Eintrags → mit `<sv-each>`                                                  |
+| `highlight`     | boolean    | Optische Hervorhebung, im CMS pro Eintrag setzbar (→ `data-sv-show`)                       |
+| `stageColor`    | string     | Farbe der Bühne aus den Event-Einstellungen (`''`, wenn keine hinterlegt)                  |
+| `typeColor`     | string     | Farbe des ersten passenden Typ-Tags                                                        |
+| `categoryColor` | string     | Farbe des ersten passenden Kategorie-Tags                                                  |
+| `dayName`       | string     | Name des Tabs, so wie der Veranstalter ihn getippt hat                                     |
+| `dayDate`       | string     | Datum des Tabs als `JJJJ-MM-TT` (`''`, wenn der Tab keins hat) → `data-format`             |
+| `dayIndex`      | number     | Position des **Tabs**, `1`-basiert (genau das, was `day="N"` auswählt) — keine Tagesnummer |
+| `dayId`         | string     | Stabile Id des Tabs — ändert sich nicht, wenn der Tab umbenannt oder verschoben wird       |
+
+> **`description` kommt als Klartext an.** Im CMS ist die Beschreibung ein formatierter Text und
+> wird als HTML gespeichert. `data-bind` und `data-bind-attr` schreiben aber Text bzw.
+> Attributwerte, deshalb liefert die Runtime das Feld ohne Tags: Absätze, Zeilenumbrüche und
+> Listenpunkte werden zu Zeilenumbrüchen, fett/kursiv/Links entfallen. Sollen die Umbrüche
+> sichtbar sein, gib dem Element `white-space: pre-line`.
 
 **Tages-Felder** (bei `group="day"`):
 
