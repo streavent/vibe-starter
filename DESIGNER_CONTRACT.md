@@ -1156,18 +1156,19 @@ Zwei Dinge dazu:
 
 **Attribute:** `limit`, `sort` (`name`), `filter`, `exclude`
 
-| Feld        | Typ     | Bedeutung                                     |
-| ----------- | ------- | --------------------------------------------- |
-| `name`      | string  | Vollständiger Name                            |
-| `bio?`      | string  | Kurzbiografie                                 |
-| `image?`    | string  | Profilfoto-URL                                |
-| `company?`  | string  | Firma/Organisation                            |
-| `position?` | string  | Jobtitel/Rolle                                |
-| `website?`  | string  | Website-URL                                   |
-| `linkedIn?` | string  | LinkedIn-URL                                  |
-| `twitter?`  | string  | Twitter/X-URL                                 |
-| `featured`  | boolean | Vom Veranstalter hervorgehoben (Haken im CMS) |
-| `category?` | string  | Speaker-Kategorie („Keynote", „Moderation")   |
+| Feld           | Typ     | Bedeutung                                                            |
+| -------------- | ------- | -------------------------------------------------------------------- |
+| `name`         | string  | Vollständiger Name                                                   |
+| `bio?`         | string  | Kurzbiografie                                                        |
+| `image?`       | string  | Profilfoto-URL                                                       |
+| `company?`     | string  | Firma/Organisation                                                   |
+| `position?`    | string  | Jobtitel/Rolle                                                       |
+| `website?`     | string  | Website-URL                                                          |
+| `linkedIn?`    | string  | LinkedIn-URL                                                         |
+| `twitter?`     | string  | Twitter/X-URL                                                        |
+| `featured`     | boolean | Vom Veranstalter hervorgehoben (Haken im CMS)                        |
+| `category?`    | string  | Speaker-Kategorie („Keynote", „Moderation")                          |
+| `customFields` | array   | Öffentliche Zusatzfelder des Profils → mit `<sv-each>` (siehe unten) |
 
 **Hervorgehobene Speaker bekommen eine eigene Reihe, keine Sortierung.** `featured` ist ein
 Haken pro Person im Speaker-Management — die zwei, drei Namen, die das Event verkaufen. Wenn
@@ -1208,6 +1209,52 @@ Zeile mit Abstand.
 
 > Für **Detailseiten** pro Speaker → dynamische Seite via `streavent.config.json`
 > (`collection: "speakers"`), dann auf der Vorlage `data-bind` direkt nutzen (siehe Kap. 3.3).
+
+**`customFields` sind die Zusatzfelder aus dem Speaker-Profil** („Institut", „Schwerpunkte",
+„Auch remote buchbar"). Es erscheinen **nur Felder, die der Veranstalter als öffentlich markiert
+hat**, in der Reihenfolge des Formulars. Datei-Uploads erscheinen **nie**; interne
+Standardfelder (z. B. eine nicht-öffentliche Firma) fehlen einfach, wie jedes andere leere Feld.
+Die Liste ist immer da — ohne öffentliche Zusatzfelder ist sie leer.
+
+| Feld         | Typ                         | Bedeutung                                                                                                                   |
+| ------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `id`         | string                      | Stabile ID des Felds (bleibt bei Umbenennung gleich)                                                                        |
+| `label`      | string                      | Feldname, wie der Veranstalter ihn vergeben hat                                                                             |
+| `type`       | string                      | `text`, `textarea`, `select`, `multiselect`, `checkbox` oder `image`                                                        |
+| `value`      | string · string[] · boolean | Anzeigewert: Auswahlfelder schon als Text, `multiselect` als Liste, `checkbox` als `true`/`false`, `image` als absolute URL |
+| `isText`     | boolean                     | `text`, `textarea`, `select`, `multiselect` — `data-bind="value"` zeigt den Wert (Listen mit `, `)                          |
+| `isImage`    | boolean                     | Bild — `value` ist die URL für `<img data-bind="value">`                                                                    |
+| `isCheckbox` | boolean                     | Ja/Nein — `value` ist `true`/`false`; die Wörter schreibst du ins Template                                                  |
+
+Der Binder kennt keine Bedingungen, deshalb gibt es pro Darstellungsart ein Flag. Ein
+`<sv-each>` deckt so jedes Feld ab, das der Veranstalter später noch freischaltet — ohne
+dass du Feldnamen oder Positionen fest ins Template schreibst:
+
+```html
+<sv-speakers>
+  <template>
+    <article class="speaker">
+      <h3 data-bind="name"></h3>
+      <dl class="speaker-facts" data-sv-show="customFields">
+        <sv-each field="customFields">
+          <template>
+            <dt data-bind="label"></dt>
+            <dd data-sv-show="isText" data-bind="value"></dd>
+            <dd data-sv-show="isCheckbox"><span data-sv-show="value">Ja</span><span data-sv-hide="value">Nein</span></dd>
+            <dd data-sv-show="isImage"><img data-bind="value" data-bind-attr="alt:label" /></dd>
+          </template>
+        </sv-each>
+      </dl>
+    </article>
+  </template>
+  <template slot="empty"><p>Bald verfügbar.</p></template>
+</sv-speakers>
+```
+
+Ein einzelnes Feld gezielt herauszugreifen (`customFields.0.value`) ist möglich, hängt aber an
+der Reihenfolge im Formular und an der Freigabe durch den Veranstalter — bau darauf nichts,
+was ohne das Feld kaputt aussieht. Das eingebaute Agenda-Widget zeigt dieselben Felder im
+Speaker-Popup unter der Biografie.
 
 #### `<sv-agenda>` — Programm / Sessions
 
@@ -2248,7 +2295,7 @@ Viewport gleich.
 
 | Komponente                 | Liefert               | Wichtige Felder                                                                                                                                                                                                       |
 | -------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`, `featured`, `category`                                                                                                         |
+| `<sv-speakers>`            | Liste                 | `id`, `name`, `bio`, `image`, `company`, `position`, `website`, `linkedIn`, `twitter`, `featured`, `category`, `customFields[]` (`label`, `type`, `value`, `isText`, `isImage`, `isCheckbox`)                         |
 | `<sv-agenda>`              | Liste (Einträge)      | `topic`, `description`, `date`, `dateEnd`, `timeText`, `stage`, `type[]`, `category[]`, `headerImg`, `speakers[]`, `highlight`, `stageColor`, `typeColor`, `categoryColor`, `dayName`, `dayDate`, `dayIndex`, `dayId` |
 | `<sv-agenda group="day">`  | Liste (Tage)          | `dayName`, `dayDate`, `dayNumber`, `entries[]`, `tracks[]` (`name`, `entries[]`), `hasTracks`, `stages[]`                                                                                                             |
 | `<sv-agenda>` → `speakers` | nested                | `name`, `image`, `company`, `position`, `link`                                                                                                                                                                        |

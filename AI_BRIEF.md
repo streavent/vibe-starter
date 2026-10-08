@@ -109,20 +109,20 @@ nehmen (Contract 10.5).
 
 **Katalog (Felder → siehe `dist/COMPONENT_CATALOG.md` für Details):**
 
-| Tag                        | Art          | Wichtigste Felder                                                                                                |
-| -------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `<sv-event>`               | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                                          |
-| `<sv-capacity>`            | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                            |
-| `<sv-speakers>`            | Liste        | name, bio, image, company, position, website, linkedIn, twitter, featured, category                              |
-| `<sv-agenda>`              | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName, dayDate, dayIndex, dayId |
-| `<sv-agenda group="day">`  | Liste (Tage) | dayName, dayDate, dayNumber, entries, tracks (name, entries), hasTracks, stages                                  |
-| `<sv-sponsors>`            | Liste        | name, logoUrl, bannerUrl, description, website, documents, slug, url (`group="category"`: name, color, sponsors) |
-| `<sv-events>`              | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                                       |
-| `<sv-gallery field="…">`   | Liste        | image, alt, caption (kundeneditierbar; Bundle-Defaults via `<template slot="default">`)                          |
-| `<sv-collection name="…">` | Liste        | die im Manifest deklarierten Felder dieser Collection (+ `slug`, `url`)                                          |
-| `<sv-langswitch>`          | Liste        | code, label, url, isCurrent                                                                                      |
-| `<sv-image field="…">`     | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                                         |
-| `<sv-video field="…">`     | Einzelvideo  | Attribute: field (Pflicht), default, poster; autoplay/muted/loop/playsinline/preload/class werden durchgereicht  |
+| Tag                        | Art          | Wichtigste Felder                                                                                                               |
+| -------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `<sv-event>`               | Einzelobjekt | name, description, startDate, endDate, location, organizer, image, logo                                                         |
+| `<sv-capacity>`            | Einzelobjekt | atCapacity, waitlistEnabled (für `data-sv-show/hide`)                                                                           |
+| `<sv-speakers>`            | Liste        | name, bio, image, company, position, website, linkedIn, twitter, featured, category, customFields (→ `<sv-each>`, Contract 5.3) |
+| `<sv-agenda>`              | Liste        | topic, description, date, dateEnd, stage, type, category, headerImg, speakers, dayName, dayDate, dayIndex, dayId                |
+| `<sv-agenda group="day">`  | Liste (Tage) | dayName, dayDate, dayNumber, entries, tracks (name, entries), hasTracks, stages                                                 |
+| `<sv-sponsors>`            | Liste        | name, logoUrl, bannerUrl, description, website, documents, slug, url (`group="category"`: name, color, sponsors)                |
+| `<sv-events>`              | Liste        | name, location, eventDateTime, url (noch nicht verdrahtet)                                                                      |
+| `<sv-gallery field="…">`   | Liste        | image, alt, caption (kundeneditierbar; Bundle-Defaults via `<template slot="default">`)                                         |
+| `<sv-collection name="…">` | Liste        | die im Manifest deklarierten Felder dieser Collection (+ `slug`, `url`)                                                         |
+| `<sv-langswitch>`          | Liste        | code, label, url, isCurrent                                                                                                     |
+| `<sv-image field="…">`     | Einzelbild   | Attribute: field (Pflicht), default, sizes, loading, alt                                                                        |
+| `<sv-video field="…">`     | Einzelvideo  | Attribute: field (Pflicht), default, poster; autoplay/muted/loop/playsinline/preload/class werden durchgereicht                 |
 
 Auf Detailseiten (`dynamicPages`) bindest du die Felder der Collection **direkt** (kein `<sv-*>`-Wrapper).
 Zusätzlich verfügbar auf detail-verlinkbaren Einträgen: `url`, `slug`.

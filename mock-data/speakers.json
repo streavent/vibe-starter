@@ -10,7 +10,27 @@
     "linkedIn": "https://linkedin.com/in/example-anna",
     "twitter": "https://x.com/example_anna",
     "featured": true,
-    "category": "Keynote"
+    "category": "Keynote",
+    "customFields": [
+      {
+        "id": "cf-institution",
+        "label": "Institut",
+        "type": "text",
+        "value": "Lehrstuhl für IT-Sicherheit"
+      },
+      {
+        "id": "cf-topics",
+        "label": "Schwerpunkte",
+        "type": "multiselect",
+        "value": ["KI-Sicherheit", "Bedrohungserkennung"]
+      },
+      {
+        "id": "cf-remote",
+        "label": "Auch remote buchbar",
+        "type": "checkbox",
+        "value": true
+      }
+    ]
   },
   {
     "id": "spk-max",
@@ -23,7 +43,8 @@
     "linkedIn": "https://linkedin.com/in/example-max",
     "twitter": "",
     "featured": false,
-    "category": "Track Lead"
+    "category": "Track Lead",
+    "customFields": []
   },
   {
     "id": "spk-leila",
@@ -36,7 +57,8 @@
     "linkedIn": "",
     "twitter": "https://x.com/example_leila",
     "featured": true,
-    "category": "Keynote"
+    "category": "Keynote",
+    "customFields": []
   },
   {
     "id": "spk-jonas",
@@ -49,6 +71,7 @@
     "linkedIn": "https://linkedin.com/in/example-jonas",
     "twitter": "",
     "featured": false,
-    "category": "Moderation"
+    "category": "Moderation",
+    "customFields": []
   }
 ]
